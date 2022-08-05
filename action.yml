@@ -1,0 +1,110 @@
+name: 'Set up common workflow requirements'
+description: 'Do things'
+inputs:
+  git_checkout_fetch_depth:
+    description: 'Fetch depth for git checkout'
+    required: false
+    default: '1'
+  phpcs:
+    description: 'Prepare environment for PHPCS'
+    required: false
+    default: '0'
+  phpunit:
+    description: 'Prepare environment for PHPUnit'
+    required: false
+    default: '0'
+  ssh_key_encoded:
+    description: 'base-64 encoded SSH key to install'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    # Universal needs
+
+    - name: Prepare SSH key
+      run: |
+        echo 'INPUT_SSH_KEY_ENCODED<<EOF' >> $GITHUB_ENV
+        echo "${{ inputs.ssh_key_encoded }}" >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
+      shell: bash
+
+    - name: Set up SSH
+      run: ${{ github.action_path }}/scripts/set-up-ssh.sh
+      shell: bash
+
+    - name:  Add shared utilities
+      run: ${{ github.action_path }}/scripts/add-shared-utilities.sh
+      shell: bash
+
+    - name: Check out repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: ${{ inputs.git_checkout_fetch_depth }}
+
+    # Prepare for PHPCS or PHPUnit
+
+    - name: Determine PHP coverage mode
+      id: php-coverage-mode
+      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+      run: |
+        if [[ '${{ inputs.phpunit }}' == '1' ]]; then
+          echo "::set-output name=mode::xdebug"
+        else
+          echo "::set-output name=mode::none"
+        fi
+      shell: bash
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@v2
+      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+      with:
+        php-version: '7.4'
+        coverage: ${{ steps.php-coverage-mode.outputs.mode }}
+        tools: composer:1
+
+    - name: Log debug information
+      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+      run: |
+        php --version
+        composer --version
+      shell: bash
+
+    - name: Install Composer dependencies
+      uses: ramsey/composer-install@v2
+      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+      with:
+        composer-options: "--no-progress --no-ansi --no-interaction"
+
+    - name: Make Composer packages available globally
+      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+      run: echo "${PWD}/vendor/bin" >> $GITHUB_PATH
+      shell: bash
+
+    # Prepare for PHPCS
+
+      # This date is used to ensure that the PHPCS cache is cleared at least once every week.
+      # http://man7.org/linux/man-pages/man1/date.1.html
+    - name: Get last Monday's date
+      id: get-date
+      if: ${{ inputs.phpcs == 1 }}
+      run: echo "::set-output name=date::$(/bin/date -u --date='last Mon' "+%F")"
+      shell: bash
+
+    - name: Cache PHPCS scan cache
+      if: ${{ inputs.phpcs == '1' }}
+      uses: actions/cache@v3
+      with:
+        path: .cache/phpcs.json
+        key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-phpcs-cache-${{ hashFiles('**/composer.lock', 'phpcs.xml') }}
+
+    - name: Install diffFilter
+      if: ${{ inputs.phpcs == '1' }}
+      run: composer global require exussum12/coverage-checker
+      shell: bash
+
+    - name: Log PHPCS debug information
+      if: ${{ inputs.phpcs == '1' }}
+      run: |
+        phpcs -i
+        phpcs --config-show
+      shell: bash
