@@ -99,6 +99,7 @@ runs:
       run: |
         composer global require exussum12/coverage-checker
         which diffFilter
+        composer config home
         ls -la ~/.composer
         ls -la ~/.composer/vendor
         ls -la ~/.composer/vendor/bin
