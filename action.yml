@@ -69,6 +69,7 @@ runs:
         composer --version
       shell: bash
 
+      # TODO: cache these.
     - name: Install Composer dependencies
       uses: ramsey/composer-install@v2
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
