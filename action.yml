@@ -114,5 +114,7 @@ runs:
 
     - name: Create plugin loader
       if: ${{ inputs.phpunit == '1' }}
-      run: cp "${{ github.action_path }}/templates/plugin-loader.php" /tmp
+      run: |
+        cp "${{ github.action_path }}/templates/plugin-loader.php" "${TMPDIR}"
+        cat "${TMPDIR}/plugin-loader.php"
       shell: bash
