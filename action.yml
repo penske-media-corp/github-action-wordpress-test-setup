@@ -109,3 +109,10 @@ runs:
         phpcs -i
         phpcs --config-show
       shell: bash
+
+    # Prepare for PHPUnit
+
+    - name: Create plugin loader
+      if: ${{ inputs.phpunit == '1' }}
+      run: cp "${{ github.action_path }}/templates/plugin-loader.php" /tmp
+      shell: bash
