@@ -23,6 +23,9 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Debug
+      run: echo "${{ github.event_name }}"
+      shell: bash
     # Universal needs
 
     - name: Prepare SSH key
@@ -102,7 +105,7 @@ runs:
         key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-php-${{ inputs.php_version }}-phpcs-${{ inputs.phpcs }}-phpunit-${{ inputs.phpunit }}-composer-global
 
     - name: Install diffFilter
-      if: ${{ ( inputs.phpcs == '1' || inputs.phpunit == '1' ) && steps.composer-cache-global.cache-hit != 'true' }}
+      if: ${{ ( inputs.phpcs == '1' || inputs.phpunit == '1' ) && steps.composer-cache-global.outputs.cache-hit != 'true' }}
       run: composer global require exussum12/coverage-checker
       shell: bash
 
@@ -130,7 +133,7 @@ runs:
     # Prepare for PHPUnit
 
     - name: Install PHPUnit
-      if: ${{ inputs.phpunit == '1' && steps.composer-cache-global.cache-hit != 'true' }}
+      if: ${{ inputs.phpunit == '1' && steps.composer-cache-global.outputs.cache-hit != 'true' }}
       run: |
         if [[ $(php -v) =~ "PHP 8." ]]; then
           composer global require "phpunit/phpunit=9.*"
