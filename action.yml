@@ -73,10 +73,9 @@ runs:
         composer --version
       shell: bash
 
-      # TODO: cache these.
     - name: Install Composer dependencies
       uses: ramsey/composer-install@v2
-      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+      if: ${{ ( inputs.phpcs == '1' || inputs.phpunit == '1' ) }}
       with:
         composer-options: "--no-progress --no-ansi --no-interaction"
 
@@ -102,9 +101,20 @@ runs:
         path: .cache/phpcs.json
         key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-phpcs-cache-${{ hashFiles('**/composer.lock', 'phpcs.xml') }}
 
+#    - name: Cache repo's composer dependencies
+#      id: composer-cache-global
+#      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+#      uses: actions/cache@v3
+#      with:
+#        path: .cache/www # TODO: what will this be? Add a step to get it!
+#        key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-composer-global
+
+    # TODO: cache this.
     - name: Install diffFilter
       if: ${{ inputs.phpcs == '1' }}
-      run: composer global require exussum12/coverage-checker
+      run: |
+        composer global require exussum12/coverage-checker
+        which diffFilter
       shell: bash
 
     - name: Log PHPCS debug information
