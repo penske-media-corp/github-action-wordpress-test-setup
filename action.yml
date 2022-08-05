@@ -87,24 +87,19 @@ runs:
       run: echo "::set-output name=date::$(/bin/date -u --date='last Mon' "+%F")"
       shell: bash
 
-    - name: Make Composer packages available globally
-      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
-      run: echo "${PWD}/vendor/bin" >> $GITHUB_PATH
-      shell: bash
-
     - name: Get composer global path
       id: composer-global-path
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
       run: echo "::set-output name=path::$(composer config home)"
       shell: bash
 
-    - name: Cache repo's composer dependencies
+    - name: Cache global composer dependencies
       id: composer-cache-global
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
       uses: actions/cache@v3
       with:
         path: ${{ steps.composer-global-path.outputs.path }}
-        key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-composer-global
+        key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-php-${{ inputs.php_version }}-phpcs-${{ inputs.phpcs }}-phpunit-${{ inputs.phpunit }}-composer-global
 
     - name: Install diffFilter
       if: ${{ ( inputs.phpcs == '1' || inputs.phpunit == '1' ) && steps.composer-cache-global.cache-hit != 'true' }}
@@ -113,6 +108,10 @@ runs:
 
     # Prepare for PHPCS
 
+    - name: Make PHPCS available globally
+      if: ${{ inputs.phpcs == '1' }}
+      run: echo "${PWD}/vendor/bin" >> $GITHUB_PATH
+      shell: bash
 
     - name: Cache PHPCS scan cache
       if: ${{ inputs.phpcs == '1' }}
@@ -140,6 +139,12 @@ runs:
         fi
         
         composer global require yoast/phpunit-polyfills
+      shell: bash
+
+    - name: Log PHPUnit debug information
+      if: ${{ inputs.phpunit == '1' }}
+      run: |
+        phpunit --version
       shell: bash
 
     - name: Create plugin loader
