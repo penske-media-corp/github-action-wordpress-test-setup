@@ -84,6 +84,26 @@ runs:
       run: echo "${PWD}/vendor/bin" >> $GITHUB_PATH
       shell: bash
 
+#    - name: Cache repo's composer dependencies
+#      id: composer-cache-global
+#      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+#      uses: actions/cache@v3
+#      with:
+#        path: .cache/www # TODO: what will this be? Add a step to get it!
+#        key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-composer-global
+
+    # TODO: cache this.
+    - name: Install diffFilter
+#      if: ${{ ( inputs.phpcs == '1' || inputs.phpunit == '1' ) && steps.composer-cache-global.cache-hit != 'true' }}
+      if: ${{ ( inputs.phpcs == '1' || inputs.phpunit == '1' ) }}
+      run: |
+        composer global require exussum12/coverage-checker
+        which diffFilter
+        ls -la ~/.composer
+        ls -la ~/.composer/vendor
+        ls -la ~/.composer/vendor/bin
+      shell: bash
+
     # Prepare for PHPCS
 
       # This date is used to ensure that the PHPCS cache is cleared at least once every week.
@@ -101,24 +121,6 @@ runs:
         path: .cache/phpcs.json
         key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-phpcs-cache-${{ hashFiles('**/composer.lock', 'phpcs.xml') }}
 
-#    - name: Cache repo's composer dependencies
-#      id: composer-cache-global
-#      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
-#      uses: actions/cache@v3
-#      with:
-#        path: .cache/www # TODO: what will this be? Add a step to get it!
-#        key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-composer-global
-
-    # TODO: cache this.
-    - name: Install diffFilter
-      if: ${{ inputs.phpcs == '1' && steps.composer-cache-global.cache-hit != 'true' }}
-      run: |
-        composer global require exussum12/coverage-checker
-        which diffFilter
-        ls -la ~/.composer
-        ls -la ~/.composer/vendor
-        ls -la ~/.composer/vendor/bin
-      shell: bash
 
     - name: Log PHPCS debug information
       if: ${{ inputs.phpcs == '1' }}
