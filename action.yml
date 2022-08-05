@@ -79,30 +79,28 @@ runs:
       with:
         composer-options: "--no-progress --no-ansi --no-interaction"
 
-    - name: Make Composer packages available globally
+#    - name: Make Composer packages available globally
+#      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+#      run: echo "${PWD}/vendor/bin" >> $GITHUB_PATH
+#      shell: bash
+
+    - name: Get composer global path
+      id: composer-global-path
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
-      run: echo "${PWD}/vendor/bin" >> $GITHUB_PATH
+      run: echo "::set-output name=path::$(composer config home)"
       shell: bash
 
-#    - name: Cache repo's composer dependencies
-#      id: composer-cache-global
-#      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
-#      uses: actions/cache@v3
-#      with:
-#        path: .cache/www # TODO: what will this be? Add a step to get it!
-#        key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-composer-global
+    - name: Cache repo's composer dependencies
+      id: composer-cache-global
+      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.composer-global-path.outputs.path }}
+        key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-composer-global
 
-    # TODO: cache this.
     - name: Install diffFilter
-#      if: ${{ ( inputs.phpcs == '1' || inputs.phpunit == '1' ) && steps.composer-cache-global.cache-hit != 'true' }}
-      if: ${{ ( inputs.phpcs == '1' || inputs.phpunit == '1' ) }}
-      run: |
-        composer global require exussum12/coverage-checker
-        which diffFilter
-        composer config home
-        ls -la ~/.composer
-        ls -la ~/.composer/vendor
-        ls -la ~/.composer/vendor/bin
+      if: ${{ ( inputs.phpcs == '1' || inputs.phpunit == '1' ) && steps.composer-cache-global.cache-hit != 'true' }}
+      run: composer global require exussum12/coverage-checker
       shell: bash
 
     # Prepare for PHPCS
@@ -131,6 +129,18 @@ runs:
       shell: bash
 
     # Prepare for PHPUnit
+
+    - name: Install PHPUnit
+      if: ${{ inputs.phpunit == '1' && steps.composer-cache-global.cache-hit != 'true' }}
+      run: |
+        if [[ $(php -v) =~ "PHP 8." ]]; then
+          composer global require "phpunit/phpunit=9.*"
+        elif [[ $(php -v) =~ "PHP 7." ]]; then
+          composer global require "phpunit/phpunit=6.1.*"
+        fi
+        
+        composer global require yoast/phpunit-polyfills
+      shell: bash
 
     - name: Create plugin loader
       if: ${{ inputs.phpunit == '1' }}
