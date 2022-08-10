@@ -20,6 +20,10 @@ inputs:
   ssh_key_encoded:
     description: 'base-64 encoded SSH key to install'
     required: true
+  translation:
+    description: 'Prepare environment to validation translation support'
+    required: false
+    default: '0'
 runs:
   using: "composite"
   steps:
@@ -157,4 +161,11 @@ runs:
     - name: Create plugin loader
       if: ${{ inputs.phpunit == '1' }}
       run: cp "${{ github.action_path }}/templates/plugin-loader.php" "${RUNNER_TEMP}"
+      shell: bash
+
+    # Prepare for translation-related checks
+
+    - name: Install wp-l10n-validator
+      if: ${{ inputs.translation == 1 && steps.composer-cache-global.outputs.cache-hit != 'true' }}
+      run: composer global require JDGrimes/wp-l10n-validator
       shell: bash
