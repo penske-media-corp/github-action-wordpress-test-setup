@@ -23,9 +23,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Debug
-      run: echo "${{ github.event_name }}"
-      shell: bash
     # Universal needs
 
     - name: Prepare SSH key
@@ -47,6 +44,13 @@ runs:
       uses: actions/checkout@v3
       with:
         fetch-depth: ${{ inputs.git_checkout_fetch_depth }}
+
+    - name: Set environment variables
+      run: |
+        echo "PMC_COMMIT_DIFF_FILE=/tmp/diff.txt" >> $GITHUB_ENV
+        echo "PMC_DIFF_ONLY=${{ github.event_name == 'pull_request' }}" >> $GITHUB_ENV
+        echo "PMC_SKIP_INIT_BUILD=true" >> $GITHUB_ENV
+      shell: bash
 
     # Prepare for PHPCS or PHPUnit
 
