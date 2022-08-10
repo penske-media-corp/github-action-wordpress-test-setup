@@ -90,11 +90,11 @@ runs:
       with:
         composer-options: "--no-progress --no-ansi --no-interaction"
 
-      # This date is used to ensure that the PHPCS cache is cleared at least once every week.
+      # This date is used to ensure that the composer cache is cleared at least once every week.
       # http://man7.org/linux/man-pages/man1/date.1.html
     - name: Get last Monday's date
       id: get-date
-      if: ${{ inputs.phpcs == 1 || inputs.phpunit == 1 }}
+      if: ${{ inputs.phpcs == 1 || inputs.phpunit == 1 || inputs.translation == 1 }}
       run: echo "::set-output name=date::$(/bin/date -u --date='last Mon' "+%F")"
       shell: bash
 
@@ -110,7 +110,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: ${{ steps.composer-global-path.outputs.path }}
-        key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-php-${{ inputs.php_version }}-phpcs-${{ inputs.phpcs }}-phpunit-${{ inputs.phpunit }}-composer-global
+        key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-php-${{ inputs.php_version }}-phpcs-${{ inputs.phpcs }}-phpunit-${{ inputs.phpunit }}-translation-${{ inputs.translation }}-composer-global
 
     - name: Install diffFilter
       if: ${{ ( inputs.phpcs == '1' || inputs.phpunit == '1' ) && steps.composer-cache-global.outputs.cache-hit != 'true' }}
