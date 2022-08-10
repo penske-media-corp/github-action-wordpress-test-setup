@@ -100,13 +100,13 @@ runs:
 
     - name: Get composer global path
       id: composer-global-path
-      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' || inputs.translation == 1 }}
       run: echo "::set-output name=path::$(composer config home)"
       shell: bash
 
     - name: Cache global composer dependencies
       id: composer-cache-global
-      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' || inputs.translation == 1 }}
       uses: actions/cache@v3
       with:
         path: ${{ steps.composer-global-path.outputs.path }}
