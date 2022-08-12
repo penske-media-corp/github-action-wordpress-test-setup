@@ -47,6 +47,9 @@ runs:
 
     - name: Set environment variables
       run: |
+        # For back-compat reasons, this references Bitbucket. Once all repos are moved, we can update references to this.
+        echo "BITBUCKET_BRANCH=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+        
         echo "PMC_COMMIT_DIFF_FILE=${RUNNER_TEMP}/diff.txt" >> $GITHUB_ENV
         echo "PMC_DIFF_ONLY=${{ github.event_name == 'pull_request' }}" >> $GITHUB_ENV
         echo "PMC_SKIP_INIT_BUILD=true" >> $GITHUB_ENV
