@@ -1,13 +1,14 @@
 #!/bin/bash
 
-mkdir -p ~/.ssh
-ls -lah ~/.ssh
-if [[ ! -f ~/.ssh/known_hosts ]]; then
-  touch ~/.ssh/known_hosts
-fi
-ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
-ssh-keyscan github.com >> ~/.ssh/known_hosts
+mkdir -p "${HOME}/.ssh"
 
-echo "${INPUT_SSH_KEY_ENCODED}" | base64 --decode --ignore-garbage > ~/.ssh/id_rsa
-chmod 400 ~/.ssh/id_rsa
-ssh-keygen -lf ~/.ssh/id_rsa
+if [[ ! -f "${HOME}/.ssh/known_hosts" ]]; then
+  touch "${HOME}/.ssh/known_hosts"
+fi
+ssh-keyscan bitbucket.org >> "${HOME}/.ssh/known_hosts"
+ssh-keyscan github.com >> "${HOME}/.ssh/known_hosts"
+
+eval `ssh-agent`
+ssh-add - <<<"$( echo "${INPUT_SSH_KEY_ENCODED}" | base64 --decode --ignore-garbage )"
+
+ls -lah "${HOME}/.ssh"
