@@ -2,8 +2,8 @@
 
 mkdir -p ~/.ssh
 
-if [[ ! -f "~/.ssh/known_hosts" ]]; then
-  touch "~/.ssh/known_hosts"
+if [[ ! -f ~/.ssh/known_hosts ]]; then
+  touch ~/.ssh/known_hosts
 fi
 ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
 ssh-keyscan github.com >> ~/.ssh/known_hosts
