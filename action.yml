@@ -48,12 +48,11 @@ runs:
 
     - name: Set environment variables
       run: |
-        echo ${{ github.event }}
-        echo ${{ github.event.pull_request }}
-        
         # For back-compat reasons, this references Bitbucket. Once all repos are moved, we can update references to this.
-        echo "BITBUCKET_BRANCH=${GITHUB_REF_NAME}" >> $GITHUB_ENV
-        
+        FULL_PATH_REF="${{ github.event.pull_request.head.ref || github.ref }}"
+        REF=${FULL_PATH_REF#refs\/heads\/}
+        echo "BITBUCKET_BRANCH=${REF}" >> $GITHUB_ENV
+
         echo "PMC_COMMIT_DIFF_FILE=${RUNNER_TEMP}/diff.txt" >> $GITHUB_ENV
         echo "PMC_DIFF_ONLY=${{ github.event_name == 'pull_request' }}" >> $GITHUB_ENV
         echo "PMC_SKIP_INIT_BUILD=true" >> $GITHUB_ENV
