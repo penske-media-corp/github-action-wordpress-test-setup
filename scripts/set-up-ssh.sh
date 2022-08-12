@@ -1,7 +1,7 @@
 #!/bin/bash
 
 mkdir -p ~/.ssh
-
+ls -lah ~/.ssh
 if [[ ! -f ~/.ssh/known_hosts ]]; then
   touch ~/.ssh/known_hosts
 fi
