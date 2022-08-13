@@ -5,6 +5,10 @@ inputs:
     description: 'Fetch depth for git checkout'
     required: false
     default: '1'
+  nodejs:
+    description: 'Prepare environment for Node.js'
+    required: false
+    default: '0'
   php_version:
     description: 'PHP version to use'
     required: false
@@ -144,3 +148,21 @@ runs:
       if: ${{ inputs.phpunit == '1' }}
       run: cp "${{ github.action_path }}/templates/plugin-loader.php" "${RUNNER_TEMP}"
       shell: bash
+
+    # Prepare for Node.js
+
+    - name: Set nvm-versions cache path
+      id: set-nvm-cache-info
+      if: ${{ inputs.nodejs == 1 }}
+      run: |
+        echo "::set-output name=path::${NVM_DIR}/versions"
+        echo "::set-output name=date::$(/bin/date -u --date='last Sun' "+%F")"
+      shell: bash
+
+    - name: Cache nvm versions
+      id: cache-nvm-versions
+      if: ${{ inputs.nodejs == 1 }}
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.set-nvm-cache-info.outputs.path }}
+        key: ${{ runner.os }}-nvm-versions-${{ steps.set-nvm-cache-info.outputs.date }}
