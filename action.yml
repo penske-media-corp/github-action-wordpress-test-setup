@@ -44,11 +44,12 @@ runs:
       uses: actions/checkout@v3
       with:
         fetch-depth: ${{ inputs.git_checkout_fetch_depth }}
-        ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || '' }}
+        ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || '' }}
 
     - name: Set environment variables
       run: |
         # For back-compat reasons, this references Bitbucket. Once all repos are moved, we can update references to this.
+        echo $GITHUB_REF_NAME
         FULL_PATH_REF="${{ github.event.pull_request.head.ref || github.ref }}"
         REF=${FULL_PATH_REF#refs\/heads\/}
         echo "BITBUCKET_BRANCH=${REF}" >> $GITHUB_ENV
