@@ -49,7 +49,7 @@ runs:
     - name: Set environment variables
       run: |
         # For back-compat reasons, this references Bitbucket. Once all repos are moved, we can update references to this.
-        echo $GITHUB_REF_NAME
+        # Additionally, for "pull request" events, the `$GITHUB_REF_NAME` variable does not match the branch name.
         FULL_PATH_REF="${{ github.event.pull_request.head.ref || github.ref }}"
         REF=${FULL_PATH_REF#refs\/heads\/}
         echo "BITBUCKET_BRANCH=${REF}" >> $GITHUB_ENV
