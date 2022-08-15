@@ -15,4 +15,4 @@ ssh-keyscan github.com >> "${HOME}/.ssh/known_hosts"
 #ssh-keygen -lf "${HOME}/.ssh/id_rsa"
 
 eval `ssh-agent`
-ssh-add - <<<"$( echo "${PMC_CI_ENCODED_KEY}" )"
+ssh-add - <<<"$(echo "${INPUT_SSH_KEY_ENCODED}")"
