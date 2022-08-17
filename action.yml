@@ -65,9 +65,21 @@ runs:
         REF=${FULL_PATH_REF#refs\/heads\/}
         echo "BITBUCKET_BRANCH=${REF}" >> $GITHUB_ENV
 
+        # Set certain static environment variables.
         echo "PMC_COMMIT_DIFF_FILE=${RUNNER_TEMP}/diff.txt" >> $GITHUB_ENV
         echo "PMC_DIFF_ONLY=true" >> $GITHUB_ENV
         echo "PMC_SKIP_INIT_BUILD=true" >> $GITHUB_ENV
+
+        # Parse repository slug for use in various commands.
+        . pmc-setup-git-repo-slug
+        echo "REPO_SLUG=${REPO_SLUG}" >> $GITHUB_ENV
+
+        # Determine if we're testing `pmc-plugins`, as it has special requirements.
+        PMC_IS_PMC_PLUGINS=false
+        if [[ "pmc-plugins" == "${REPO_SLUG}" ]]; then
+          PMC_IS_PMC_PLUGINS=true
+        fi
+        echo "PMC_IS_PMC_PLUGINS=${PMC_IS_PMC_PLUGINS}" >> $GITHUB_ENV
       shell: bash
 
     # Prepare for PHPCS or PHPUnit
