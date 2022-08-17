@@ -14,7 +14,9 @@ eval `ssh-agent`
 ssh-add - <<<"$(echo "${BITBUCKET_READ_ONLY_SSH_KEY}")"
 ssh-add - <<<"$(echo "${GITHUB_READ_ONLY_SSH_KEY}")"
 
-echo $SSH_AUTH_SOCK
-echo $SSH_AGENT_PID
-
 ssh-add -l
+
+echo "BITBUCKET_READ_ONLY_SSH_KEY=''" >> $GITHUB_ENV
+echo "GITHUB_READ_ONLY_SSH_KEY=''" >> $GITHUB_ENV
+echo "SSH_AUTH_SOCK=${SSH_AUTH_SOCK}" >> $GITHUB_ENV
+echo "SSH_AGENT_PID=${SSH_AGENT_PID}" >> $GITHUB_ENV
