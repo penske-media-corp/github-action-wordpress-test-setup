@@ -27,10 +27,14 @@ inputs:
     description: 'Prepare environment for PHPUnit'
     required: false
     default: '0'
+  wordpress_verions:
+    description: ''
+    required: false
+    default: '0'
 runs:
   using: "composite"
   steps:
-    # Universal needs
+    # Shared steps
 
     - name: Prepare SSH keys
       run: |
@@ -50,12 +54,6 @@ runs:
     - name:  Add shared utilities
       run: ${{ github.action_path }}/scripts/add-shared-utilities.sh
       shell: bash
-
-    - name: Check out repository
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: ${{ inputs.git_checkout_fetch_depth }}
-        ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || '' }}
 
     - name: Set environment variables
       run: |
@@ -80,7 +78,82 @@ runs:
           PMC_IS_PMC_PLUGINS=true
         fi
         echo "PMC_IS_PMC_PLUGINS=${PMC_IS_PMC_PLUGINS}" >> $GITHUB_ENV
+        
+        # Set variables required to install WordPress.
+        if [[ "0" != "${{ inputs.wordpress_version }}" ]]; then
+          sh ${{ github.action_path }}/scripts/set-wordpress-envars.sh
+        fi
       shell: bash
+
+    - name: Start MySQL
+      id: start-mysql
+      if: ${{ inputs.wordpress_version != '0' }}
+      run: |
+        MYSQL_USER=root
+        MYSQL_PASSWORD=root
+        MYSQL_HOST=127.0.0.1
+        MYSQL_DATABASE=wordpress
+        
+        sudo systemctl start mysql.service
+        mysql --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} --host=${MYSQL_HOST} --protocol=tcp "--execute=CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
+        
+        echo "::set-output name=user::${MYSQL_USER}"
+        echo "::set-output name=password::${MYSQL_PASSWORD}"
+        echo "::set-output name=host::${MYSQL_HOST}"
+        echo "::set-output name=database::${MYSQL_DATABASE}"
+      shell: bash
+
+    - name: Set WordPress version cache key and cache path
+      id: set-wp-install-cache-info
+      if: ${{ inputs.wordpress_version != '0' }}
+      run: |
+        echo "::set-output name=path::${TMPDIR}/wp"
+
+        if [[ "${{ matrix.wordpress }}" == 'latest' ]]; then
+          echo "::set-output name=version::$(curl https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].version')"
+        else
+          echo "::set-output name=version::$(/bin/date -u "+%F")"
+        fi
+      shell: bash
+
+    - name: Cache WordPress install
+      id: cache-wordpress-install
+      if: ${{ inputs.wordpress_version != '0' }}
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.set-wp-install-cache-info.outputs.path }}
+        key: ${{ runner.os }}-version-${{ steps.set-wp-install-cache-info.outputs.version }}-php-${{ matrix.php }}-wp-${{ matrix.wordpress }}-wordpress-install
+
+    - name: Install WordPress
+      if: ${{ inputs.wordpress_version != '0' && steps.cache-wordpress-install.outputs.cache-hit != 'true' }}
+      run: |
+        SCRIPT_PATH="/usr/local/bin/install-wp-tests"
+        curl -o "${SCRIPT_PATH}" https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
+        chmod +x "${SCRIPT_PATH}"
+        yes | "${SCRIPT_PATH}" ${{ steps.start-mysql.outputs.database }} ${{ steps.start-mysql.outputs.user }} ${{ steps.start-mysql.outputs.password }} ${{ steps.start-mysql.outputs.host }} ${{ matrix.wordpress }}
+      shell: bash
+
+    - name: Install WordPress dependencies
+      if: ${{ inputs.wordpress_version != '0' }}
+      run: ${{ github.action_path }}/scripts/set-up-wordpress-dependencies.sh
+      shell: bash
+
+    - name: Determine checkout path
+      id: determine-checkout-path
+      run: |
+        if [[ "0" != "${{ inputs.wordpress_version }}" && "1" == "${{ inputs.phpunit }}" ]]; then
+          echo "::set-output name=path::${PMC_PLUGINS_DIR}"
+        else
+          echo "::set-output name=path::${{ github.workspace }}"
+        fi
+      shell: bash
+
+    - name: Check out repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: ${{ inputs.git_checkout_fetch_depth }}
+        ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || '' }}
+        path: ${{ steps.determine-checkout-path.outputs.path }}
 
     # Prepare for PHPCS or PHPUnit
 
