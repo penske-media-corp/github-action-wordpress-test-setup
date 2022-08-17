@@ -1,10 +1,16 @@
 name: 'Set up common workflow requirements'
 description: 'Do things'
 inputs:
+  bitbucket_read_only_ssh_key:
+    description: 'Read-only SSH key to access repositories on Bitbucket'
+    required: true
   git_checkout_fetch_depth:
     description: 'Fetch depth for git checkout'
     required: false
     default: '1'
+  github_read_only_ssh_key:
+    description: 'Read-only SSH keyto access repositories on GitHub'
+    required: true
   nodejs:
     description: 'Prepare environment for Node.js'
     required: false
@@ -21,18 +27,19 @@ inputs:
     description: 'Prepare environment for PHPUnit'
     required: false
     default: '0'
-  ssh_key_encoded:
-    description: 'base-64 encoded SSH key to install'
-    required: true
 runs:
   using: "composite"
   steps:
     # Universal needs
 
-    - name: Prepare SSH key
+    - name: Prepare SSH keys
       run: |
-        echo 'INPUT_SSH_KEY_ENCODED<<EOF' >> $GITHUB_ENV
-        echo "${{ inputs.ssh_key_encoded }}" >> $GITHUB_ENV
+        echo 'BITBUCKET_READ_ONLY_SSH_KEY<<EOF' >> $GITHUB_ENV
+        echo "${{ inputs.bitbucket_read_only_ssh_key }}" >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
+        
+        echo 'GITHUB_READ_ONLY_SSH_KEY<<EOF' >> $GITHUB_ENV
+        echo "${{ inputs.github_read_only_ssh_key }}" >> $GITHUB_ENV
         echo 'EOF' >> $GITHUB_ENV
       shell: bash
 
