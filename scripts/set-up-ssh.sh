@@ -13,3 +13,5 @@ ssh-keyscan github.com >> "${HOME}/.ssh/known_hosts"
 eval `ssh-agent`
 ssh-add - <<<"$(echo "${BITBUCKET_READ_ONLY_SSH_KEY}")"
 ssh-add - <<<"$(echo "${GITHUB_READ_ONLY_SSH_KEY}")"
+
+ssh-add -l
