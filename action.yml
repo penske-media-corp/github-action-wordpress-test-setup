@@ -27,7 +27,7 @@ inputs:
     description: 'Prepare environment for PHPUnit'
     required: false
     default: '0'
-  wordpress_verions:
+  wordpress_verion:
     description: ''
     required: false
     default: '0'
