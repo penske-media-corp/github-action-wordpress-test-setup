@@ -143,6 +143,11 @@ runs:
         "${SCRIPT_PATH}" ${{ steps.start-mysql.outputs.database }} ${{ steps.start-mysql.outputs.user }} ${{ steps.start-mysql.outputs.password }} ${{ steps.start-mysql.outputs.host }} ${{ matrix.wordpress }}
       shell: bash
 
+    - name: Create plugin loader
+      if: ${{ inputs.wordpress_version != '0' && steps.cache-wordpress-install.outputs.cache-hit != 'true' }}
+      run: cp "${{ github.action_path }}/templates/plugin-loader.php" "${RUNNER_TEMP}"
+      shell: bash
+
     - name: Install WordPress dependencies
       if: ${{ inputs.wordpress_version != '0' }}
       run: ${{ github.action_path }}/scripts/set-up-wordpress-dependencies.sh
@@ -227,11 +232,6 @@ runs:
       if: ${{ inputs.phpunit == '1' }}
       run: |
         phpunit --version
-      shell: bash
-
-    - name: Create plugin loader
-      if: ${{ inputs.phpunit == '1' }}
-      run: cp "${{ github.action_path }}/templates/plugin-loader.php" "${RUNNER_TEMP}"
       shell: bash
 
     # Prepare for Node.js
