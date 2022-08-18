@@ -101,7 +101,7 @@ runs:
         MYSQL_DATABASE=wordpress
         
         sudo systemctl start mysql.service
-        mysql --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} --host=${MYSQL_HOST} --protocol=tcp "--execute=CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
+        # mysql --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} --host=${MYSQL_HOST} --protocol=tcp "--execute=CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
         
         echo "::set-output name=user::${MYSQL_USER}"
         echo "::set-output name=password::${MYSQL_PASSWORD}"
@@ -136,7 +136,7 @@ runs:
         SCRIPT_PATH="/usr/local/bin/install-wp-tests"
         curl -o "${SCRIPT_PATH}" https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
         chmod +x "${SCRIPT_PATH}"
-        yes 2>/dev/null | "${SCRIPT_PATH}" ${{ steps.start-mysql.outputs.database }} ${{ steps.start-mysql.outputs.user }} ${{ steps.start-mysql.outputs.password }} ${{ steps.start-mysql.outputs.host }} ${{ matrix.wordpress }}
+        "${SCRIPT_PATH}" ${{ steps.start-mysql.outputs.database }} ${{ steps.start-mysql.outputs.user }} ${{ steps.start-mysql.outputs.password }} ${{ steps.start-mysql.outputs.host }} ${{ matrix.wordpress }}
       shell: bash
 
     - name: Install WordPress dependencies
