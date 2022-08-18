@@ -73,7 +73,7 @@ runs:
         echo "REPO_SLUG=${REPO_SLUG}" >> $GITHUB_ENV
 
         # Determine if we're testing `pmc-plugins`, as it has special requirements.
-        PMC_IS_PMC_PLUGINS=false
+        PMC_IS_PMC_PLUGINS=''
         if [[ "pmc-plugins" == "${REPO_SLUG}" ]]; then
           PMC_IS_PMC_PLUGINS=true
         fi
