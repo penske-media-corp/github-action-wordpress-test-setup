@@ -36,12 +36,18 @@ runs:
   steps:
     # Shared steps
 
+    - name: Check out repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: ${{ inputs.git_checkout_fetch_depth }}
+        ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || '' }}
+
     - name: Prepare SSH keys
       run: |
         echo 'BITBUCKET_READ_ONLY_SSH_KEY<<EOF' >> $GITHUB_ENV
         echo "${{ inputs.bitbucket_read_only_ssh_key }}" >> $GITHUB_ENV
         echo 'EOF' >> $GITHUB_ENV
-        
+
         echo 'GITHUB_READ_ONLY_SSH_KEY<<EOF' >> $GITHUB_ENV
         echo "${{ inputs.github_read_only_ssh_key }}" >> $GITHUB_ENV
         echo 'EOF' >> $GITHUB_ENV
@@ -84,12 +90,6 @@ runs:
           sh ${{ github.action_path }}/scripts/set-wordpress-envars.sh
         fi
       shell: bash
-
-    - name: Check out repository
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: ${{ inputs.git_checkout_fetch_depth }}
-        ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || '' }}
 
     - name: Set WordPress version cache key and cache path
       id: set-wp-install-cache-info
