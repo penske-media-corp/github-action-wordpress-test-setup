@@ -92,21 +92,8 @@ runs:
       shell: bash
 
     - name: Start MySQL
-      id: start-mysql
       if: ${{ inputs.wordpress_version != '0' }}
-      run: |
-        MYSQL_USER=root
-        MYSQL_PASSWORD=root
-        MYSQL_HOST=127.0.0.1
-        MYSQL_DATABASE=wordpress
-        
-        sudo systemctl start mysql.service
-        # mysql --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} --host=${MYSQL_HOST} --protocol=tcp "--execute=CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
-        
-        echo "::set-output name=user::${MYSQL_USER}"
-        echo "::set-output name=password::${MYSQL_PASSWORD}"
-        echo "::set-output name=host::${MYSQL_HOST}"
-        echo "::set-output name=database::${MYSQL_DATABASE}"
+      run: sudo systemctl start mysql.service
       shell: bash
 
     - name: Set WordPress version cache key and cache path
@@ -136,7 +123,7 @@ runs:
         SCRIPT_PATH="/usr/local/bin/install-wp-tests"
         curl -o "${SCRIPT_PATH}" https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
         chmod +x "${SCRIPT_PATH}"
-        "${SCRIPT_PATH}" ${{ steps.start-mysql.outputs.database }} ${{ steps.start-mysql.outputs.user }} ${{ steps.start-mysql.outputs.password }} ${{ steps.start-mysql.outputs.host }} ${{ matrix.wordpress }}
+        "${SCRIPT_PATH}" wordpress root root 127.0.0.1 ${{ matrix.wordpress }}
       shell: bash
 
     - name: Install WordPress dependencies
