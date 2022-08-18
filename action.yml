@@ -91,11 +91,6 @@ runs:
         fetch-depth: ${{ inputs.git_checkout_fetch_depth }}
         ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || '' }}
 
-    - name: Start MySQL
-      if: ${{ inputs.wordpress_version != '0' }}
-      run: sudo systemctl start mysql.service
-      shell: bash
-
     - name: Set WordPress version cache key and cache path
       id: set-wp-install-cache-info
       if: ${{ inputs.wordpress_version != '0' }}
@@ -117,13 +112,35 @@ runs:
         path: ${{ steps.set-wp-install-cache-info.outputs.path }}
         key: ${{ runner.os }}-version-${{ steps.set-wp-install-cache-info.outputs.version }}-php-${{ matrix.php }}-wp-${{ matrix.wordpress }}-wordpress-install
 
+    - name: Start MySQL
+      id: start-mysql
+      if: ${{ inputs.wordpress_version != '0' }}
+      run: |
+        MYSQL_USER=root
+        MYSQL_PASSWORD=root
+        MYSQL_HOST=127.0.0.1
+        MYSQL_DATABASE=wordpress
+        
+        sudo systemctl start mysql.service
+        
+        echo "::set-output name=user::${MYSQL_USER}"
+        echo "::set-output name=password::${MYSQL_PASSWORD}"
+        echo "::set-output name=host::${MYSQL_HOST}"
+        echo "::set-output name=database::${MYSQL_DATABASE}"
+        
+        # If WP wasn't installed, ensure database exists.
+        if [[ "${{ steps.cache-wordpress-install.outputs.cache-hit }}" == true ]]; then
+          mysql --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} --host=${MYSQL_HOST} --protocol=tcp "--execute=CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
+        fi
+      shell: bash
+
     - name: Install WordPress
       if: ${{ inputs.wordpress_version != '0' && steps.cache-wordpress-install.outputs.cache-hit != 'true' }}
       run: |
         SCRIPT_PATH="/usr/local/bin/install-wp-tests"
         curl -o "${SCRIPT_PATH}" https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
         chmod +x "${SCRIPT_PATH}"
-        "${SCRIPT_PATH}" wordpress root root 127.0.0.1 ${{ matrix.wordpress }}
+        "${SCRIPT_PATH}" ${{ steps.start-mysql.outputs.database }} ${{ steps.start-mysql.outputs.user }} ${{ steps.start-mysql.outputs.password }} ${{ steps.start-mysql.outputs.host }} ${{ matrix.wordpress }}
       shell: bash
 
     - name: Install WordPress dependencies
