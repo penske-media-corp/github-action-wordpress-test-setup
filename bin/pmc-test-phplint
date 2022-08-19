@@ -1,0 +1,13 @@
+#!/bin/bash
+# Indicates that we are starting this file
+echo -e "${GREEN}Starting $(basename ${BASH_SOURCE[0]})${RESET}"
+
+pmc_run_phplint() {
+	for i in "${PHP_FILES[@]}"
+	do
+		echo -e "${GREEN}${SUCCESS}${RESET} Found file ${LIGHT_RED}${i}${RESET} to lint"
+		php -l $i
+	done
+}
+
+pmc_run_phplint
