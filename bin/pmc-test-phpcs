@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Indicates that we are starting this file
+echo -e "${GREEN}Starting $(basename ${BASH_SOURCE[0]})${RESET}"
+
+if [[ -z "${PHPCS_BIN}" || ! -f "${PHPCS_BIN}" ]]; then
+	export PHPCS_BIN=phpcs
+fi
+
+# Installs and sets the default standard for phpcs while allowing the override of
+# using a custom standard
+pmc_set_phpcs_standard() {
+	if [ -z "${PMC_PHPCS_STANDARD}" ]
+		then PMC_PHPCS_STANDARD="PmcWpVip"
+	fi
+
+	${PHPCS_BIN} --config-set default_standard "${PMC_PHPCS_STANDARD}"
+}
+
+pmc_run_phpcs() {
+	if [ true == "${PMC_DIFF_ONLY}" ]
+		then
+			# Since the way these commands fail we need to setup this so pipelines doesn't fail
+			set +e
+
+			# This bit of logic will setup our approved text domains for phpcs to check for
+			# Specific to pmc-plugins we need a list of approved text domains to pass into
+			# the runtime flag for the I18n sniffs.
+			if [[ -n "${PMC_IS_PMC_PLUGINS}" && -n "${PMC_PLUGINS_CHECKLIST}" ]]
+				then
+					TXT_DOMAINS=()
+					for i in "${PMC_PLUGINS_CHECKLIST[@]}"
+						do
+							TXT_DOMAINS+=($(echo "${i}" | sed -e 's/-v[0-9]//g'))
+							echo -e "${GREEN}${SUCCESS}${RESET} Found modified plugin ${LIGHT_RED}${i}${RESET} adding to list of plugins to sniff"
+					done
+					${PHPCS_BIN} -s --runtime-set text_domain $(echo "${TXT_DOMAINS[*]}" | tr " " ,) --report=json --report-json=/tmp/phpcs.json ${PHP_FILES[*]}
+			elif [ -n "${PMC_TEXT_DOMAIN}" ]
+				then ${PHPCS_BIN} -s --runtime-set text_domain ${PMC_TEXT_DOMAIN} --report=json --report-json=/tmp/phpcs.json ${PHP_FILES[*]}
+			else
+				${PHPCS_BIN} -s --report=json --report-json=/tmp/phpcs.json ${PHP_FILES[*]}
+			fi
+
+			if [[ -f /tmp/diffFilter.log ]]
+				then
+					rm -f /tmp/diffFilter.log
+			fi
+			diffFilter --phpcsStrict "${PMC_COMMIT_DIFF_FILE}" /tmp/phpcs.json 100 2>&1 | sed -Ee 's/([0-9]{1,3})\.([0-9]{1,2})% Covered//' -e 's/no coverage/code syntax error/' -e 's/coverage being lower than threshold/syntax error detected/' | tee /tmp/diffFilter.log
+
+			set -e
+			if [[ -n "$(grep 'syntax error' /tmp/diffFilter.log || true)" ]]
+				then
+					echo -e "${RED}${ERROR}${RESET} Syntax errors detected."
+					return 1
+			fi
+
+		else ${PHPCS_BIN} -vps --colors --runtime-set text_domain "${PMC_TEXT_DOMAIN}" ${PHP_FILES[*]}
+	fi
+}
+
+pmc_set_phpcs_standard
+pmc_run_phpcs

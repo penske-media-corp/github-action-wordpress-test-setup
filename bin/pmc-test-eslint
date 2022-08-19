@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -e
+
+. pmc-functions
+
+# Indicates that we are starting this file
+echo -e "${GREEN}Starting $(basename ${BASH_SOURCE[0]})${RESET}"
+
+pmc_run_eslint() {
+	if [ -n "${JS_FILES}" ];
+		then
+			if [ true == "${PMC_DIFF_ONLY}" ]
+				then
+
+					BASE_BRANCH="origin/$(pmc_get_git_default_branch)"
+
+					# This command is using this weird if/else because there is a bug in the linter where if the file has no issues it still spits out the wrong exit code for pipelines.
+					if [[ -n "$(which lint-diff)" && -n "$(lint-diff "${BASE_BRANCH}..${BITBUCKET_BRANCH}")" ]]
+						then lint-diff lint "${BASE_BRANCH}..${BITBUCKET_BRANCH}"
+						else echo -e "${BLUE}${INFO}${RESET} No eslint diff errors found"
+					fi
+				else
+					for i in "${JS_FILES[@]}"
+						do
+							echo -e "${YELLOW}${WARNING}${RESET} Found file ${LIGHT_RED}${i}${RESET} to lint"
+							# IF there are files you want to ignore simply add a .eslintignore file to
+							# your project as per https://eslint.org/docs/user-guide/configuring#ignoring-files-and-directories
+							eslint ${i} --format table
+					done
+			fi
+		else echo -e "${YELLOW}${WARNING}${RESET} No js files in JS_FILES var found to lint in commit ${LIGHT_RED}${COMMIT}${RESET}"
+	fi
+}
+
+pmc_run_eslint

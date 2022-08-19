@@ -1,0 +1,118 @@
+#!/bin/bash
+
+echo -e "${GREEN}Starting $(basename ${BASH_SOURCE[0]})${RESET}"
+
+. pmc-test-functions
+
+if [[ -z "${PHPUNIT_BIN}" ]]; then
+	export PHPUNIT_BIN=phpunit
+fi
+
+pmc_phpunit() {
+	rm -f /tmp/phpunit.log
+
+	if [ -n "${1}" ]
+		then local filename="/tmp/coverage-${REPO_SLUG}-${1}-${COMMIT}.xml"
+		else local filename="/tmp/coverage-${REPO_SLUG}-${COMMIT}.xml"
+	fi
+	echo -e "${BLUE}${INFO}${RESET} Setting coverage filename to ${LIGHT_RED}${filename}${RESET}"
+
+	# Run our tests and generate coverage report
+	if [ ! -f ${filename} ]
+		then
+			echo -e "${GREEN}${SUCCESS}${RESET} Starting unit tests in ${LIGHT_RED}${REPO_SLUG}${RESET} repo for commit ${LIGHT_RED}${COMMIT}${RESET} on branch ${LIGHT_RED}${BRANCH_NAME}${RESET} within ${LIGHT_RED}$(pwd)${RESET} directory"
+
+			if [ "off" = "${XDEBUG}" ]; then
+				${PHPUNIT_BIN} -v --exclude-group pmc-phpunit-ignore-failed --no-coverage 2>&1 | tee /tmp/phpunit.log
+			else
+				${PHPUNIT_BIN} -v --exclude-group pmc-phpunit-ignore-failed --coverage-clover=${filename} 2>&1 | tee /tmp/phpunit.log
+			fi
+
+	fi
+
+	if [[ -f /tmp/diffFilter.log ]]
+		then
+			rm -f /tmp/diffFilter.log
+	fi
+
+	if [[ -f ${filename} ]]
+		then
+			maybe_copy_artifacts ${filename}
+	fi
+
+	if [[ true == "${PMC_DIFF_ONLY}" && -f "${PMC_COMMIT_DIFF_FILE}" && -f ${filename} ]]
+		then
+			diffFilter --phpunit "${PMC_COMMIT_DIFF_FILE}" ${filename} 2>&1 | tee /tmp/diffFilter.log
+			if [[ -n "$(grep 'No lines found!' /tmp/diffFilter.log || true)" ]]
+				then
+					# if we detect no diff files within the phpunit whitelist, we should bypass coverage reporting
+					rm -f ${filename}
+			elif [[ -n "$(grep 'no coverage' /tmp/diffFilter.log || true)" ]]
+				then
+					echo -e "${RED}${ERROR}${RESET} Code coverage errors detected."
+					return 1
+			fi
+	fi
+
+	if [ -f ${filename} ]
+		then rm -f ${filename}
+	fi
+
+	# scan /tmp/phpunit.log file to fatal error that may not trigger unit test error
+	FAILED_MSG="$(grep -E 'Tests: [0-9]+, Assertions: [0-9]+, Failures: [0-9]+' /tmp/phpunit.log || true)"
+	if [[ -f /tmp/phpunit.log && -n "${FAILED_MSG}" ]]
+		then
+			echo -e "${RED}${ERROR}${RESET} Error detected, ${FAILED_MSG}"
+			return 1
+	fi
+
+	if [[ -f /tmp/phpunit.log \
+		&& -z "$(grep -E 'OK \([0-9]+\stests?,\s[0-9]+\sassertions?\)' /tmp/phpunit.log || true)" \
+		&& -z "$(grep -E 'OK, but incomplete, skipped, or risky tests!' /tmp/phpunit.log || true)" \
+		&& -z "$(grep -E 'No tests executed!' /tmp/phpunit.log || true)" \
+		]]
+		then
+			echo -e "Error detected, cannot locate successful unit test OK string"
+			return 1
+	fi
+
+}
+
+pmc_run_tests() {
+	# Check if we are using pmc-plugins and if so we only need to run tests for the
+	# current plugin and not all of them in pmc-plugins.
+	# pmc-plugins is set then just run phpunit
+	if [[ -n "${PMC_IS_PMC_PLUGINS}" && -n "${PMC_PLUGINS_CHECKLIST}" ]]
+		# Loop through and run the tests from within the directory of only changed
+		# Plugins. This way we can prevent having to setup a LOT of phpunit vars and
+		# potential errors
+		then for i in "${PMC_PLUGINS_CHECKLIST[@]}"
+			do
+				if [[ -d "./${i}/tests" && -f "${i}/phpunit.xml" ]]; then
+					pushd ${i}
+					echo -e "${GREEN}${SUCCESS}${RESET} Starting unit tests in ${LIGHT_RED}$(pwd)${RESET}"
+					pmc_phpunit ${i}
+					popd
+				else
+					echo -e "${YELLOW}${WARNING}${RESET} No tests directory found in ${LIGHT_RED}${i}${RESET} skipping unit tests for ${LIGHT_RED}${i}${RESET}"
+				fi
+		done
+	elif [[ -z "${PMC_IS_PMC_PLUGINS}" && -d "./tests" ]]
+		then
+			# . <( cat /usr/local/bin/pmc/*-functions.sh )
+			if [ true == "${PMC_PHPUNIT_MATCH_BRANCH}" ]
+				# We need to detect and switch pmc-plugins & parent theme to matching branch
+				then
+					maybe_switch_branch_for_testing_theme "."
+			elif [[ "$(pmc_get_git_default_branch)" == "${PMC_PHPUNIT_MATCH_BRANCH}" ]]
+				# We want to force pmc-plugins & parent theme to use default branch
+				then
+					maybe_switch_branch_for_testing_theme "." "$(pmc_get_git_default_branch)"
+			fi
+			pmc_phpunit
+	else
+		echo -e "${BLUE}${INFO}${RESET} Repo doesn't appear to have a tests dir in $(pwd)"
+	fi
+}
+
+pmc_run_tests
