@@ -1,5 +1,5 @@
 name: 'Set up common workflow requirements'
-description: 'Do things'
+description: 'Prepare environment for testing a WordPress plugin or theme'
 inputs:
   bitbucket_read_only_ssh_key:
     description: 'Read-only SSH key to access repositories on Bitbucket'
