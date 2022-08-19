@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. pipeline-functions
+. pmc-test-functions
 
 WEB_ROOT="${WP_CORE_DIR}"
 WP_CONTENT_TARGET_DIR="${WP_CORE_DIR}/wp-content"

@@ -58,7 +58,11 @@ runs:
       shell: bash
 
     - name:  Add shared utilities
-      run: ${{ github.action_path }}/scripts/add-shared-utilities.sh
+      run: |
+        ${{ github.action_path }}/scripts/add-shared-utilities.sh
+        
+        echo "${{ github.action_path }}/bin" >> $GITHUB_PATH
+        pmc-test-test
       shell: bash
 
     - name: Set environment variables
