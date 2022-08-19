@@ -62,6 +62,8 @@ runs:
         ${{ github.action_path }}/scripts/add-shared-utilities.sh
         
         echo "${{ github.action_path }}/bin" >> $GITHUB_PATH
+        echo "${GITHUB_PATH}"
+        ls -lah "${{ github.action_path }}/bin"
         pmc-test-test
       shell: bash
 
