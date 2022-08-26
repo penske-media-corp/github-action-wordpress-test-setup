@@ -184,7 +184,7 @@ runs:
       run: |
         php --version
         php -i
-        telnet localhost 11211
+        telnet memcached 11211
       shell: bash
 
       # This date is used to ensure that caches are cleared weekly.
