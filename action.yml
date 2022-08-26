@@ -183,8 +183,7 @@ runs:
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
       run: |
         php --version
-        php -i
-        telnet memcached 11211
+        telnet 127.0.0.1 11211
       shell: bash
 
       # This date is used to ensure that caches are cleared weekly.

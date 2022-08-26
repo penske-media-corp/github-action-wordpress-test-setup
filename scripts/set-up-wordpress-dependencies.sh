@@ -16,12 +16,6 @@ if [[ ! -n "$(grep '000-pre-vip-config/requires.php' "${WP_CONFIG_PATH}")" ]]; t
   mv -f "${TMP_WP_CONFIG_PATH}" "${WP_CONFIG_PATH}"
 fi
 
-if [[ ! -n "$(grep 'memcached_servers' "${WP_CONFIG_PATH}")" ]]; then
-  MEMCACHED_ADDITION="\$memcached_servers = [ 'default' => [ 'memcached:11211' ] ];\n"
-  awk "/${WP_CONFIG_ADDITIONS_ANCHOR}/{print \"${MEMCACHED_ADDITION}\"}1" "${WP_CONFIG_PATH}" > "${TMP_WP_CONFIG_PATH}"
-  mv -f "${TMP_WP_CONFIG_PATH}" "${WP_CONFIG_PATH}"
-fi
-
 cat "${WP_CONFIG_PATH}"
 
 # Install client-mu-plugins.
