@@ -144,6 +144,8 @@ runs:
         curl -o "${SCRIPT_PATH}" https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
         chmod +x "${SCRIPT_PATH}"
         "${SCRIPT_PATH}" ${{ steps.start-mysql.outputs.database }} ${{ steps.start-mysql.outputs.user }} ${{ steps.start-mysql.outputs.password }} ${{ steps.start-mysql.outputs.host }} ${{ matrix.wordpress }}
+        
+        sed -i 's/example\.org/pmcdev\.local/g' "${WP_TESTS_DIR}/wp-tests-config.php"
       shell: bash
 
     - name: Create plugin loader
