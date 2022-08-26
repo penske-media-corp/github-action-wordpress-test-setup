@@ -233,9 +233,7 @@ runs:
 
     - name: Log PHPUnit debug information
       if: ${{ inputs.phpunit == '1' }}
-      run: |
-        phpunit --version
-        netstat -antp
+      run: phpunit --version
       shell: bash
 
     - name: Set unit-test constants
