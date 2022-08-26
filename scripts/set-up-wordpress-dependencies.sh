@@ -11,7 +11,7 @@ WP_CONFIG_PATH="${WP_TESTS_DIR}/wp-tests-config.php"
 if [[ ! -n "$(grep '000-pre-vip-config/requires.php' "${WP_CONFIG_PATH}")" ]]; then
   VIP_GO_REQUIRES_ADDITION="// Load VIP's additional requirements.
 if ( file_exists( ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.php' ) ) {
-  require_once ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.php';\n
+  require_once ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.php';
 }
 "
   echo "${VIP_GO_REQUIRES_ADDITION}" >> "${WP_CONFIG_PATH}"
