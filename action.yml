@@ -183,7 +183,8 @@ runs:
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
       run: |
         php --version
-        composer --version
+        php -i
+        telnet localhost 11211
       shell: bash
 
       # This date is used to ensure that caches are cleared weekly.
