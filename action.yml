@@ -239,6 +239,12 @@ runs:
         phpunit --version
       shell: bash
 
+    - name: Set unit-test constants
+      if: ${{ inputs.phpunit == '1' }}
+      run: |
+        echo "define( 'IS_UNIT_TEST', true );" >> "${WP_TESTS_DIR}/wp-tests-config.php"
+      shell: bash
+
     # Prepare for PHPCS
 
     - name: Install PHPCS and PMC standards
