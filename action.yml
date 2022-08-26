@@ -237,7 +237,6 @@ runs:
       if: ${{ inputs.phpunit == '1' }}
       run: |
         phpunit --version
-        ps -eaf | grep memcached
       shell: bash
 
     - name: Set unit-test constants
