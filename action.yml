@@ -148,6 +148,17 @@ runs:
         sed -i 's/example\.org/pmcdev\.local/g' "${WP_TESTS_DIR}/wp-tests-config.php"
       shell: bash
 
+    - name: Install WP-CLI
+      if: ${{ inputs.wordpress_version != '0' }}
+      run: |
+        DESTINATION="/usr/local/bin/wp"
+        curl -o "${DESTINATION}" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        chmod +x "${DESTINATION}"
+        
+        wp --path=$WP_CORE_DIR cli info
+        wp --path=$WP_CORE_DIR cache type
+      shell: bash
+
     - name: Create plugin loader
       if: ${{ inputs.wordpress_version != '0' && steps.cache-wordpress-install.outputs.cache-hit != 'true' }}
       run: cp "${{ github.action_path }}/templates/plugin-loader.php" "${RUNNER_TEMP}"
