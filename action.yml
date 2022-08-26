@@ -225,7 +225,7 @@ runs:
         if [[ $(php -v) =~ "PHP 8." ]]; then
           composer global require "phpunit/phpunit=9.*"
         elif [[ $(php -v) =~ "PHP 7." ]]; then
-          composer global require "phpunit/phpunit=6.1.*"
+          composer global require "phpunit/phpunit=7.*"
         fi
         
         composer global require yoast/phpunit-polyfills
