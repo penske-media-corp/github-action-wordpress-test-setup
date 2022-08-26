@@ -181,9 +181,7 @@ runs:
 
     - name: Log debug information
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
-      run: |
-        php --version
-        telnet 127.0.0.1 11211
+      run: php --version
       shell: bash
 
       # This date is used to ensure that caches are cleared weekly.
