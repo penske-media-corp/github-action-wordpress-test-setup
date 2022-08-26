@@ -144,8 +144,6 @@ runs:
         curl -o "${SCRIPT_PATH}" https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
         chmod +x "${SCRIPT_PATH}"
         "${SCRIPT_PATH}" ${{ steps.start-mysql.outputs.database }} ${{ steps.start-mysql.outputs.user }} ${{ steps.start-mysql.outputs.password }} ${{ steps.start-mysql.outputs.host }} ${{ matrix.wordpress }}
-        
-        sed -i 's/example\.org/pmcdev\.local/g' "${WP_TESTS_DIR}/wp-tests-config.php"
       shell: bash
 
     - name: Create plugin loader
@@ -239,7 +237,17 @@ runs:
     - name: Set unit-test constants
       if: ${{ inputs.phpunit == '1' }}
       run: |
-        echo "define( 'IS_UNIT_TEST', true );" >> "${WP_TESTS_DIR}/wp-tests-config.php"
+        WP_CONFIG_PATH="${WP_TESTS_DIR}/wp-tests-config.php"
+
+        echo "define( 'IS_UNIT_TEST', true );" >> "${WP_CONFIG_PATH}"
+        echo "define( 'VIP_GO_APP_ENVIRONMENT', true );" >> "${WP_CONFIG_PATH}"
+        echo "define( 'IS_VIP_GO', true );" >> "${WP_CONFIG_PATH}"
+        echo "define( 'VIP_GO_ENV', 'dev' );" >> "${WP_CONFIG_PATH}"
+        echo "define( 'PMC_IS_VIP_GO_SITE', true );" >> "${WP_CONFIG_PATH}"
+
+        sed -i 's/example\.org/pmcdev\.local/g' "${WP_CONFIG_PATH}"
+
+        cat "${WP_CONFIG_PATH}"
       shell: bash
 
     # Prepare for PHPCS

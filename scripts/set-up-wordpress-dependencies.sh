@@ -7,16 +7,11 @@ WP_CONTENT_TARGET_DIR="${WP_CORE_DIR}/wp-content"
 
 # Modify `wp-tests-config.php`.
 WP_CONFIG_PATH="${WP_TESTS_DIR}/wp-tests-config.php"
-TMP_WP_CONFIG_PATH="${RUNNER_TEMP}/mod-wp-config"
-WP_CONFIG_ADDITIONS_ANCHOR="\/\*\* Sets up WordPress vars and included files\. \*\/"
 
 if [[ ! -n "$(grep '000-pre-vip-config/requires.php' "${WP_CONFIG_PATH}")" ]]; then
   VIP_GO_REQUIRES_ADDITION="// Load VIP's additional requirements.\nif ( file_exists( ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.php' ) ) {\n\trequire_once ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.php';\n}\n"
-  awk "/${WP_CONFIG_ADDITIONS_ANCHOR}/{print \"${VIP_GO_REQUIRES_ADDITION}\"}1" "${WP_CONFIG_PATH}" > "${TMP_WP_CONFIG_PATH}"
-  mv -f "${TMP_WP_CONFIG_PATH}" "${WP_CONFIG_PATH}"
+  echo "${VIP_GO_REQUIRES_ADDITION}" >> "${WP_CONFIG_PATH}"
 fi
-
-cat "${WP_CONFIG_PATH}"
 
 # Install client-mu-plugins.
 if [[ ! -d "${WP_CONTENT_TARGET_DIR}/client-mu-plugins" ]]; then
