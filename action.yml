@@ -87,11 +87,11 @@ runs:
           PMC_IS_PMC_PLUGINS=true
         fi
         echo "PMC_IS_PMC_PLUGINS=${PMC_IS_PMC_PLUGINS}" >> $GITHUB_ENV
-        
-        # Set variables required to install WordPress.
-        if [[ "0" != "${{ inputs.wordpress_version }}" ]]; then
-          bash ${{ github.action_path }}/scripts/set-wordpress-envars.sh
-        fi
+      shell: bash
+
+    - name: Set environment variables to install WordPress
+      if: ${{ inputs.wordpress_version != '0' }}
+      run: bash ${{ github.action_path }}/scripts/set-wordpress-envars.sh
       shell: bash
 
     - name: Set WordPress version cache key and cache path
@@ -147,7 +147,7 @@ runs:
       shell: bash
 
     - name: Create plugin loader
-      if: ${{ inputs.wordpress_version != '0' && steps.cache-wordpress-install.outputs.cache-hit != 'true' }}
+      if: ${{ inputs.wordpress_version != '0' }}
       run: cp "${{ github.action_path }}/templates/plugin-loader.php" "${RUNNER_TEMP}"
       shell: bash
 
