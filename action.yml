@@ -90,7 +90,7 @@ runs:
         
         # Set variables required to install WordPress.
         if [[ "0" != "${{ inputs.wordpress_version }}" ]]; then
-          sh ${{ github.action_path }}/scripts/set-wordpress-envars.sh
+          bash ${{ github.action_path }}/scripts/set-wordpress-envars.sh
         fi
       shell: bash
 
