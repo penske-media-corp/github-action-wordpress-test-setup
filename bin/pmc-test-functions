@@ -181,7 +181,7 @@ function checkout_dependencies {
     fi
   fi
 
-  git_checkout ${WEB_ROOT}/wp-content/plugins/pmc-plugins git@bitbucket.org:penskemediacorp/pmc-plugins.git 0
+  git_checkout ${WEB_ROOT}/wp-content/plugins/pmc-plugins git@github.com:penske-media-corp/pmc-plugins.git 0
 }
 
 function get_parent_wp_theme {
