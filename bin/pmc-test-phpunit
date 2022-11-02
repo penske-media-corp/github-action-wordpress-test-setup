@@ -25,11 +25,11 @@ pmc_phpunit() {
 			echo -e "${GREEN}${SUCCESS}${RESET} Starting unit tests in ${LIGHT_RED}${REPO_SLUG}${RESET} repo for commit ${LIGHT_RED}${COMMIT}${RESET} on branch ${LIGHT_RED}${BRANCH_NAME}${RESET} within ${LIGHT_RED}$(pwd)${RESET} directory"
 
       pwd
-      ls -la
-      ls -la /home/runner/work/pmc-artnews-2019/
-      ls -la /home/runner/work/pmc-artnews-2019/pmc-artnews-2019/
+
       ls -la /home/runner/work/pmc-artnews-2019/pmc-artnews-2019/inc/classes/
       ls -la /home/runner/work/pmc-artnews-2019/pmc-artnews-2019/inc/classes/widgets/
+      ls -la /home/runner/work/pmc-artnews-2019/pmc-artnews-2019/inc/classes/widgets/
+
 			if [ "off" = "${XDEBUG}" ]; then
 				${PHPUNIT_BIN} -v --exclude-group pmc-phpunit-ignore-failed --no-coverage 2>&1 | tee /tmp/phpunit.log
 			else
