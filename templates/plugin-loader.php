@@ -11,6 +11,7 @@
 add_action( 'muplugins_loaded', function() {
 	var_export( 'LOADING PLUGINS!', false );
 	var_export( PMC_IS_VIP_GO_SITE, false );
+var_export( has_action( 'muplugins_loaded', [ PMC\Unit_Test\Bootstrap::get_instance(), 'muplugins_loaded_early_bind' ] ), false );
 	$theme_plugins_path = getenv( 'GITHUB_WORKSPACE' ) . '/client-mu-plugins/';
 
 	if ( wpcom_vip_should_load_plugins() && is_dir( $theme_plugins_path ) ) {
