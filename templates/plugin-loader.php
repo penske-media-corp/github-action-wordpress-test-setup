@@ -22,4 +22,4 @@ add_action( 'muplugins_loaded', function() {
 	}
 
 	unset( $theme_plugins_path );
-} );
+}, 999999 );
