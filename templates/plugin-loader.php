@@ -11,6 +11,8 @@
 // Cannot use `STYLESHEETPATH` as it isn't set yet.
 $theme_plugins_path = get_stylesheet_directory() . '/client-mu-plugins/';
 var_export( 'LOADING PLUGINS!', false );
+var_export( $theme_plugins_path, false );
+var_export( is_dir( $theme_plugins_path ), false );
 if ( wpcom_vip_should_load_plugins() && is_dir( $theme_plugins_path ) ) {
 	foreach ( wpcom_vip_get_client_mu_plugins( $theme_plugins_path ) as $client_mu_plugin ) {
 var_export( $client_mu_plugin, false );
