@@ -42,6 +42,8 @@ git_checkout "${WP_CONTENT_TARGET_DIR}/plugins" git@bitbucket.org:penskemediacor
 if [[ -z "${PMC_IS_PMC_PLUGINS}" ]]; then
   WP_THEME_FOLDER="${WP_CONTENT_TARGET_DIR}/themes"
   checkout_dependencies .
+
+  ln -s "${GITHUB_WORKSPACE}" "${WP_THEME_FOLDER}/vip/pmc-artnews-2019"
 else
   rm -rf "${PMC_PLUGINS_DIR}"
   ln -s "${GITHUB_WORKSPACE}" "${PMC_PLUGINS_DIR}"
