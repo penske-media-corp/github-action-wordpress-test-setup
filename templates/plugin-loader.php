@@ -9,6 +9,8 @@
  */
 
 add_action( 'muplugins_loaded', function() {
+	var_export( 'LOADING PLUGINS!', false );
+	var_export( PMC_IS_VIP_GO_SITE, false );
 	$theme_plugins_path = getenv( 'GITHUB_WORKSPACE' ) . '/client-mu-plugins/';
 
 	if ( wpcom_vip_should_load_plugins() && is_dir( $theme_plugins_path ) ) {
