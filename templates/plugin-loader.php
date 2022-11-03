@@ -9,7 +9,7 @@
  */
 
 // Cannot use `STYLESHEETPATH` as it isn't set yet.
-$theme_plugins_path = get_stylesheet_directory() . '/client-mu-plugins/';
+$theme_plugins_path = getenv( 'GITHUB_WORKSPACE' ) . '/client-mu-plugins/';
 var_export( 'LOADING PLUGINS!', false );
 var_export( $theme_plugins_path, false );
 var_export( is_dir( $theme_plugins_path ), false );
