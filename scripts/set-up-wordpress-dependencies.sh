@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -x
+env
+
 . pmc-test-functions
 
 WEB_ROOT="${WP_CORE_DIR}"
