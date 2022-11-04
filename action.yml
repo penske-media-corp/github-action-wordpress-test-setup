@@ -93,7 +93,7 @@ runs:
         echo "PMC_IS_PMC_PLUGINS=${PMC_IS_PMC_PLUGINS}" >> $GITHUB_ENV
 
         # Set VIP_THEME variable
-        echo "VIP_THEME=${VIP_THEME}" >> $GITHUB_ENV
+        echo "VIP_THEME=${{ inputs. VIP_THEME }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Set environment variables to install WordPress
