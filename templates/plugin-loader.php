@@ -8,7 +8,7 @@
  * first place.
  */
 
-tests_add_action( 'muplugins_loaded', function() {
+tests_add_filter( 'muplugins_loaded', function() {
 	var_export( 'LOADING PLUGINS!', false );
 	var_export( PMC_IS_VIP_GO_SITE, false );
 var_export( has_action( 'muplugins_loaded', [ PMC\Unit_Test\Bootstrap::get_instance(), 'muplugins_loaded_early_bind' ] ), false );
