@@ -8,7 +8,12 @@
  * first place.
  */
 
-tests_add_filter( 'muplugins_loaded', function() {
+add_action( 'muplugins_loaded', static function(): void {
+	// Bail during the PHPUnit install step as it happens before the bootstrap sets necessary constants.
+	if ( ! class_exists( PMC\Unit_Test\Bootstrap::class, false ) ) {
+		return;
+	}
+	
 	var_export( 'LOADING PLUGINS!', false );
 	var_export( PMC_IS_VIP_GO_SITE, false );
 
@@ -23,4 +28,4 @@ tests_add_filter( 'muplugins_loaded', function() {
 	}
 
 	unset( $theme_plugins_path );
-}, 999999 );
+} );
