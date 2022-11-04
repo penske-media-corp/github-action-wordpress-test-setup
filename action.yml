@@ -27,7 +27,7 @@ inputs:
     description: 'Prepare environment for PHPUnit'
     required: false
     default: '0'
-  VIP_THEME:
+  vip_theme:
     description: 'If the theme is a vip theme'
     required: true
     type: boolean
@@ -93,7 +93,7 @@ runs:
         echo "PMC_IS_PMC_PLUGINS=${PMC_IS_PMC_PLUGINS}" >> $GITHUB_ENV
 
         # Set VIP_THEME variable
-        echo "VIP_THEME=${{ inputs. VIP_THEME }}" >> $GITHUB_ENV
+        echo "VIP_THEME=${{ inputs. vip_theme }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Set environment variables to install WordPress
