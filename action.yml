@@ -27,6 +27,10 @@ inputs:
     description: 'Prepare environment for PHPUnit'
     required: false
     default: '0'
+  VIP_THEME:
+    description: 'If the theme is a vip theme'
+    required: true
+    type: boolean
   wordpress_version:
     description: ''
     required: false
@@ -60,7 +64,7 @@ runs:
     - name:  Add shared utilities
       run: |
         ${{ github.action_path }}/scripts/add-shared-utilities.sh
-        
+
         echo "${{ github.action_path }}/bin" >> $GITHUB_PATH
       shell: bash
 
@@ -123,14 +127,14 @@ runs:
         MYSQL_PASSWORD=root
         MYSQL_HOST=127.0.0.1
         MYSQL_DATABASE=wordpress
-        
+
         sudo systemctl start mysql.service
-        
+
         echo "::set-output name=user::${MYSQL_USER}"
         echo "::set-output name=password::${MYSQL_PASSWORD}"
         echo "::set-output name=host::${MYSQL_HOST}"
         echo "::set-output name=database::${MYSQL_DATABASE}"
-        
+
         # If WP wasn't installed, ensure database exists.
         if [[ "${{ steps.cache-wordpress-install.outputs.cache-hit }}" == true ]]; then
           mysql --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} --host=${MYSQL_HOST} --protocol=tcp "--execute=CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
@@ -154,6 +158,9 @@ runs:
     - name: Install WordPress dependencies
       if: ${{ inputs.wordpress_version != '0' }}
       run: ${{ github.action_path }}/scripts/set-up-wordpress-dependencies.sh
+      with:
+        VIP_THEME: ${{ inputs.VIP_THEME }}
+        REPO_SLUG: ${{ env.REPO_SLUG }}
       shell: bash
 
     # Prepare for PHPCS or PHPUnit
@@ -225,7 +232,7 @@ runs:
         elif [[ $(php -v) =~ "PHP 7." ]]; then
           composer global require "phpunit/phpunit=7.*"
         fi
-        
+
         composer global require yoast/phpunit-polyfills
       shell: bash
 
