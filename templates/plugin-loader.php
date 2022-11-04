@@ -8,24 +8,22 @@
  * first place.
  */
 
-add_action( 'muplugins_loaded', static function(): void {
-	// Bail during the PHPUnit install step as it happens before the bootstrap sets necessary constants.
-	if ( ! class_exists( PMC\Unit_Test\Bootstrap::class, false ) ) {
-		return;
-	}
-	
-	var_export( 'LOADING PLUGINS!', false );
-	var_export( PMC_IS_VIP_GO_SITE, false );
-
-	$theme_plugins_path = getenv( 'GITHUB_WORKSPACE' ) . '/client-mu-plugins/';
-
-	if ( wpcom_vip_should_load_plugins() && is_dir( $theme_plugins_path ) ) {
-		foreach ( wpcom_vip_get_client_mu_plugins( $theme_plugins_path ) as $client_mu_plugin ) {
-			include_once $client_mu_plugin;
+add_action( 
+	'muplugins_loaded', 
+	static function(): void {
+		// Bail during the PHPUnit install step as it happens before the bootstrap sets necessary constants.
+		if ( ! class_exists( PMC\Unit_Test\Bootstrap::class, false ) ) {
+			return;
 		}
 
-		unset( $client_mu_plugin );
-	}
+		$theme_plugins_path = getenv( 'GITHUB_WORKSPACE' ) . '/client-mu-plugins/';
 
-	unset( $theme_plugins_path );
-} );
+		if ( wpcom_vip_should_load_plugins() && is_dir( $theme_plugins_path ) ) {
+			foreach ( wpcom_vip_get_client_mu_plugins( $theme_plugins_path ) as $client_mu_plugin ) {
+				include_once $client_mu_plugin;
+			}
+
+			unset( $client_mu_plugin );
+		}
+	}
+);
