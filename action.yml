@@ -158,10 +158,10 @@ runs:
     - name: Install WordPress dependencies
       if: ${{ inputs.wordpress_version != '0' }}
       run: ${{ github.action_path }}/scripts/set-up-wordpress-dependencies.sh
+      shell: bash
       with:
         VIP_THEME: ${{ inputs.VIP_THEME }}
         REPO_SLUG: ${{ env.REPO_SLUG }}
-      shell: bash
 
     # Prepare for PHPCS or PHPUnit
 
