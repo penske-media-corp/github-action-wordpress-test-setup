@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 echo -e "${GREEN}Starting $(basename ${BASH_SOURCE[0]})${RESET}"
 
 . pmc-test-functions
@@ -23,8 +21,6 @@ pmc_phpunit() {
 	if [ ! -f ${filename} ]
 		then
 			echo -e "${GREEN}${SUCCESS}${RESET} Starting unit tests in ${LIGHT_RED}${REPO_SLUG}${RESET} repo for commit ${LIGHT_RED}${COMMIT}${RESET} on branch ${LIGHT_RED}${BRANCH_NAME}${RESET} within ${LIGHT_RED}$(pwd)${RESET} directory"
-
-      pwd
 
 			if [ "off" = "${XDEBUG}" ]; then
 				${PHPUNIT_BIN} -v --exclude-group pmc-phpunit-ignore-failed --no-coverage 2>&1 | tee /tmp/phpunit.log
