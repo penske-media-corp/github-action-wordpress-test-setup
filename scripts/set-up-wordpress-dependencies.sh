@@ -42,6 +42,14 @@ git_checkout "${WP_CONTENT_TARGET_DIR}/plugins" git@bitbucket.org:penskemediacor
 if [[ -z "${PMC_IS_PMC_PLUGINS}" ]]; then
   WP_THEME_FOLDER="${WP_CONTENT_TARGET_DIR}/themes"
   checkout_dependencies .
+
+  if [[ "${VIP_THEME}" == true ]]; then
+    echo "vip theme is set to true"
+    ln -s "${GITHUB_WORKSPACE}" "${WP_THEME_FOLDER}/vip/${REPO_SLUG}"
+  else
+    echo "vip theme is set to false"
+    ln -s "${GITHUB_WORKSPACE}" "${WP_THEME_FOLDER}/${REPO_SLUG}"
+  fi
 else
   rm -rf "${PMC_PLUGINS_DIR}"
   ln -s "${GITHUB_WORKSPACE}" "${PMC_PLUGINS_DIR}"

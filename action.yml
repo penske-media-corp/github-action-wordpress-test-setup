@@ -27,6 +27,10 @@ inputs:
     description: 'Prepare environment for PHPUnit'
     required: false
     default: '0'
+  vip_theme:
+    description: 'If the theme is a vip theme'
+    required: true
+    type: boolean
   wordpress_version:
     description: ''
     required: false
@@ -60,7 +64,7 @@ runs:
     - name:  Add shared utilities
       run: |
         ${{ github.action_path }}/scripts/add-shared-utilities.sh
-        
+
         echo "${{ github.action_path }}/bin" >> $GITHUB_PATH
       shell: bash
 
@@ -87,6 +91,9 @@ runs:
           PMC_IS_PMC_PLUGINS=true
         fi
         echo "PMC_IS_PMC_PLUGINS=${PMC_IS_PMC_PLUGINS}" >> $GITHUB_ENV
+
+        # Set VIP_THEME variable
+        echo "VIP_THEME=${{ inputs. vip_theme }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Set environment variables to install WordPress
@@ -123,14 +130,14 @@ runs:
         MYSQL_PASSWORD=root
         MYSQL_HOST=127.0.0.1
         MYSQL_DATABASE=wordpress
-        
+
         sudo systemctl start mysql.service
-        
+
         echo "::set-output name=user::${MYSQL_USER}"
         echo "::set-output name=password::${MYSQL_PASSWORD}"
         echo "::set-output name=host::${MYSQL_HOST}"
         echo "::set-output name=database::${MYSQL_DATABASE}"
-        
+
         # If WP wasn't installed, ensure database exists.
         if [[ "${{ steps.cache-wordpress-install.outputs.cache-hit }}" == true ]]; then
           mysql --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} --host=${MYSQL_HOST} --protocol=tcp "--execute=CREATE DATABASE IF NOT EXISTS ${MYSQL_DATABASE};"
@@ -225,7 +232,7 @@ runs:
         elif [[ $(php -v) =~ "PHP 7." ]]; then
           composer global require "phpunit/phpunit=7.*"
         fi
-        
+
         composer global require yoast/phpunit-polyfills
       shell: bash
 
