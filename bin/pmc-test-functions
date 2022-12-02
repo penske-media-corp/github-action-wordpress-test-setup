@@ -15,7 +15,7 @@ function git_switch_to_master_if_branch_not_exist {
 		if [[ -n "${REMOTE_BRANCH}" ]]; then
 			git checkout ${BRANCH}
 		else
-			git checkout master
+			git checkout $(pmc_get_git_default_branch ${GIT_REMOTE})
 		fi
 		git pull
 	fi
@@ -144,14 +144,14 @@ function git_checkout {
   echo_info "git checkout ${TARGET}"
   mkdir -p ${TARGET}
   pushd ${TARGET} 2>&1 > /dev/null
-ls -lah
+
   git config --global --add safe.directory $( pwd )
 
   if [ ! -d ${TARGET}/.git ]; then
     if [[ -z "${DEPTH}" || "0" == "${DEPTH}" ]]; then
       git clone --quiet --recursive --bare ${SOURCE} .git
     else
-      git clone --quiet -b master --depth ${DEPTH} --recursive --bare ${SOURCE} .git
+      git clone --quiet -b $(pmc_get_git_default_branch ${SOURCE}) --depth ${DEPTH} --recursive --bare ${SOURCE} .git
     fi
     git config --unset core.bare
     git reset --hard
