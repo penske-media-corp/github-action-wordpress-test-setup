@@ -36,7 +36,7 @@ if [[ -f "${WP_CONTENT_TARGET_DIR}/plugins/README.md" ]]; then
   rm -rf "${WP_CONTENT_TARGET_DIR}/plugins"
 fi
 
-git_checkout "${WP_CONTENT_TARGET_DIR}/plugins" git@github.com:penske-media-corp/pmc-vip-go-plugins.git 1
+git_checkout "${WP_CONTENT_TARGET_DIR}/plugins" git@bitbucket.org:penskemediacorp/pmc-vip-go-plugins.git 1
 
 # Install pmc-plugins and parent theme.
 if [[ -z "${PMC_IS_PMC_PLUGINS}" ]]; then
