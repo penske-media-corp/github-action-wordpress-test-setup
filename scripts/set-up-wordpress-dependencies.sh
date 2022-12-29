@@ -45,9 +45,6 @@ if [[ -z "${PMC_IS_PMC_PLUGINS}" ]]; then
 
   if [[ "${VIP_THEME}" == true ]]; then
     echo "vip theme is set to true"
-    pwd
-    ls -la
-    ls -la "${GITHUB_WORKSPACE}"
     ls -la "${WP_THEME_FOLDER}"
     ln -s "${GITHUB_WORKSPACE}" "${WP_THEME_FOLDER}/vip/${REPO_SLUG}"
   else
