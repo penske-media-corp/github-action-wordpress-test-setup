@@ -41,6 +41,11 @@ git_checkout "${WP_CONTENT_TARGET_DIR}/plugins" git@github.com:penske-media-corp
 # Install pmc-plugins and parent theme.
 if [[ -z "${PMC_IS_PMC_PLUGINS}" ]]; then
   WP_THEME_FOLDER="${WP_CONTENT_TARGET_DIR}/themes"
+
+  if [[ "${VIP_THEME}" == true ]]; then
+    mkdir "${WP_THEME_FOLDER}/vip"
+  fi
+
   checkout_dependencies .
 
   if [[ "${VIP_THEME}" == true ]]; then
