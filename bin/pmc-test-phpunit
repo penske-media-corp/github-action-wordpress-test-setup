@@ -9,6 +9,9 @@ if [[ -z "${PHPUNIT_BIN}" ]]; then
 fi
 
 pmc_phpunit() {
+  echo "pmc_phpunit"
+  pwd
+
 	rm -f /tmp/phpunit.log
 
 	if [ -n "${1}" ]
@@ -99,6 +102,9 @@ pmc_run_tests() {
 		done
 	elif [[ -z "${PMC_IS_PMC_PLUGINS}" && -d "./tests" ]]
 		then
+		  echo "pmc_run_tests"
+		  pwd
+
 			# . <( cat /usr/local/bin/pmc/*-functions.sh )
 			if [ true == "${PMC_PHPUNIT_MATCH_BRANCH}" ]
 				# We need to detect and switch pmc-plugins & parent theme to matching branch

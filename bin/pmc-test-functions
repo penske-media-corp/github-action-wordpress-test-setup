@@ -36,6 +36,9 @@ function maybe_switch_branch_for_testing_theme {
 	export WP_THEME_PARENT_BRANCH=
 	export PMC_PLUGINS_BRANCH=
 
+  echo "maybe_switch_branch_for_testing_theme"
+	pwd
+
 	if [[ -z "${BRANCH}" ]]; then
 		if [[ -n "${THEME}" && "." != "${THEME}" ]]; then
 			if [[ ! -d ${WP_THEME_FOLDER}/${THEME}/.git || ! -f ${WP_THEME_FOLDER}/${THEME}/style.css ]]; then
@@ -48,6 +51,9 @@ function maybe_switch_branch_for_testing_theme {
 			BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 		fi
 	fi
+
+	echo "after branch check"
+	pwd
 
 	if [[ -z "${BRANCH}" ]]; then
 		return;
@@ -68,6 +74,9 @@ function maybe_switch_branch_for_testing_theme {
 		popd 2>&1 > /dev/null
 	fi
 
+  echo "after detect parent"
+	pwd
+
 	# Detect pmc-plugin matching branch
 	if [[ -d ${WEB_ROOT}/wp-content/plugins/pmc-plugins ]]; then
 		echo "Switch branch '${BRANCH}' on 'pmc-plugins'"
@@ -77,6 +86,9 @@ function maybe_switch_branch_for_testing_theme {
 		popd 2>&1 > /dev/null
 	fi
 
+  echo "after switch pmc-plugins branch"
+	pwd
+
 	# Detect pmc-vip-go-plugins matching branch
 	if [[ -d ${WEB_ROOT}/wp-content/plugins ]]; then
 		echo "Switch branch '${BRANCH}' on 'pmc-vip-go-plugins'"
@@ -84,6 +96,9 @@ function maybe_switch_branch_for_testing_theme {
 		git_switch_to_master_if_branch_not_exist "${BRANCH}"
 		popd 2>&1 > /dev/null
 	fi
+
+  echo "after switch pmc-vip-go-plugins branch"
+	pwd
 }
 
 function maybe_build_pmc_plugins_js_checklist {
