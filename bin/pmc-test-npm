@@ -27,7 +27,7 @@ pmc_run_npmtest() {
 
 				nvm install
 				nvm use
-				if [[ $( npm run | grep 'test' ) ]]; then
+				if [[ $( npm run | egrep '(^|[[:space:]])test($|[[:space:]]])' ) ]]; then
 					npm config set unsafe-perm true
 					npm config set user 0
 					npm ci
