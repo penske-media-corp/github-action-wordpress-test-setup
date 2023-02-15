@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -e
+
+echo -e "${GREEN}Starting $(basename ${BASH_SOURCE[0]})${RESET}"
+
+pmc_run_npm_build() {
+		cwd=$(pwd)
+
+		# Find all the package.json files not in node_modules and store as an array
+		packagejsons=()
+		while IFS=  read -r -d $'\0'; do
+			packagejsons+=("$REPLY")
+		done < <(find . -maxdepth 3 -type d -name "*node_modules*" -prune -o -name "package.json" -print0)
+
+    set -e
+		for i in "${packagejsons[@]}"
+		do
+			pushd $( dirname $i )
+			if [[ -f "package.json" ]]; then
+				pwd
+
+				if [[ ! -f ".nvmrc" ]]; then
+					echo "WARNING: No .nvmrc found for $PWD"
+					exit 1
+				fi
+
+				nvm install
+				if [[ 0 != $(jq '.scripts.build|length' < package.json) ]]; then
+					npm config set unsafe-perm true
+					npm config set user 0
+					npm ci
+					npm run build || { echo 'Build Failed'; exit 1; }
+				fi
+			fi
+			popd
+		done
+
+		# Return to the original directory
+		cd $cwd;
+}
+
+. pmc-setup-colors
+. pmc-setup-ssh
+. pmc-setup-clone-dir
+. pmc-setup-git-environment
+. pmc-setup-pmc-plugins
+. pmc-setup-bashrc
+. pmc-setup-assets-dir
+. pmc-functions
+. pmc-test-functions
+maybe_build_pmc_plugins_js_checklist
+
+if [[ -n "${PMC_IS_PMC_PLUGINS}" ]]
+then
+	if [[ -n "${PMC_PLUGINS_JS_CHECKLIST}"  ]]
+	then
+		# Loop through and run the tests from within the directory of only changed
+		# Plugins. This way we can prevent having to setup a LOT of phpunit vars and
+		# potential errors
+		for i in "${PMC_PLUGINS_JS_CHECKLIST[@]}"
+		do
+			pushd ${i}
+			pmc_run_npm_build
+			popd
+		done
+	fi
+else
+	pmc_run_npm_build
+fi
