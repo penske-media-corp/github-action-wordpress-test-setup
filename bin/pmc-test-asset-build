@@ -4,7 +4,7 @@ set -e
 
 echo -e "${GREEN}Starting $(basename ${BASH_SOURCE[0]})${RESET}"
 
-pmc_run_npmtest() {
+pmc_run_npm_build() {
 		cwd=$(pwd)
 
 		# Find all the package.json files not in node_modules and store as an array
@@ -25,12 +25,17 @@ pmc_run_npmtest() {
 					exit 1
 				fi
 
-				if [[ 0 != $(jq '.scripts.test|length' < package.json) ]]; then
+				if [[ 0 != $(jq '.scripts.build|length' < package.json) || 0 != $(jq '.scripts.prod|length' < package.json) ]]; then
 				  nvm install
 					npm config set unsafe-perm true
 					npm config set user 0
 					npm ci
-					npm run test || { echo 'Tests Failed' ; exit 1; }
+
+					if [[ 0 != $(jq '.scripts.build|length' < package.json) ]]; then
+						npm run build || { echo 'Build Failed'; exit 1; }
+					elif [ 0 != $(jq '.scripts.prod|length' < package.json) ]; then
+						npm run prod || { echo 'Build Failed'; exit 1; }
+					fi
 				fi
 			fi
 			popd
@@ -61,10 +66,13 @@ then
 		for i in "${PMC_PLUGINS_JS_CHECKLIST[@]}"
 		do
 			pushd ${i}
-			pmc_run_npmtest
+			echo ""
+			echo -e "${LIGHT_BLUE}Verifying ${i}${RESET}"
+			pmc_run_npm_build
+			echo ""
 			popd
 		done
 	fi
 else
-	pmc_run_npmtest
+	pmc_run_npm_build
 fi
