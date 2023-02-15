@@ -25,9 +25,8 @@ pmc_run_npmtest() {
 					exit 1
 				fi
 
-				nvm install
-				nvm use
-				if [[ $( npm run | grep 'test' ) ]]; then
+				if [[ 0 != $(jq '.scripts.test|length' < package.json) ]]; then
+				  nvm install
 					npm config set unsafe-perm true
 					npm config set user 0
 					npm ci

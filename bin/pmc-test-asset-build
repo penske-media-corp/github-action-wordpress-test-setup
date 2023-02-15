@@ -25,8 +25,8 @@ pmc_run_npm_build() {
 					exit 1
 				fi
 
-				nvm install
 				if [[ 0 != $(jq '.scripts.build|length' < package.json) ]]; then
+				  nvm install
 					npm config set unsafe-perm true
 					npm config set user 0
 					npm ci
