@@ -61,7 +61,10 @@ then
 		for i in "${PMC_PLUGINS_JS_CHECKLIST[@]}"
 		do
 			pushd ${i}
+			echo ""
+			echo -e "${LIGHT_BLUE}Verifying ${i}${RESET}"
 			pmc_run_npm_build
+			echo ""
 			popd
 		done
 	fi
