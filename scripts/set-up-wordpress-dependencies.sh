@@ -26,6 +26,9 @@ mv "${RUNNER_TEMP}/plugin-loader.php" "${WP_CONTENT_TARGET_DIR}/client-mu-plugin
 # Install VIP Go's mu-plugins.
 git_checkout "${WP_CONTENT_TARGET_DIR}/mu-plugins" https://github.com/Automattic/vip-go-mu-plugins-built.git 1
 
+# Pin mu-plugins due to breakage in https://github.com/Automattic/vip-go-mu-plugins-built/commit/aa1415a89c4eb78317c4ad5da387d785f70c6582.
+git -C "${WP_CONTENT_TARGET_DIR}/mu-plugins" checkout f32e78915a13c7fde62af9de88496ef3fed03d77
+
 # Install memcached drop-in.
 if [[ ! -f "${WP_CONTENT_TARGET_DIR}/object-cache.php" && -f "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/object-cache/object-cache-stable.php" ]]; then
   ln -s "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/object-cache/object-cache-stable.php" "${WP_CONTENT_TARGET_DIR}/object-cache.php"
