@@ -104,12 +104,12 @@ runs:
       id: set-wp-install-cache-info
       if: ${{ inputs.wordpress_version != '0' }}
       run: |
-        echo "::set-output name=path::${TMPDIR}/wp"
+        echo "path=${TMPDIR}/wp" >> $GITHUB_OUTPUT
 
         if [[ "${{ matrix.wordpress }}" == 'latest' ]]; then
-          echo "::set-output name=version::$(curl https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].version')"
+          echo "version=$(curl https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].version')" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=version::$(/bin/date -u "+%F")"
+          echo "version=$(/bin/date -u '+%F')" >> $GITHUB_OUTPUT
         fi
       shell: bash
 
@@ -132,10 +132,10 @@ runs:
 
         sudo systemctl start mysql.service
 
-        echo "::set-output name=user::${MYSQL_USER}"
-        echo "::set-output name=password::${MYSQL_PASSWORD}"
-        echo "::set-output name=host::${MYSQL_HOST}"
-        echo "::set-output name=database::${MYSQL_DATABASE}"
+        echo "user=${MYSQL_USER}" >> $GITHUB_OUTPUT
+        echo "password=${MYSQL_PASSWORD}" >> $GITHUB_OUTPUT
+        echo "host=${MYSQL_HOST}" >> $GITHUB_OUTPUT
+        echo "database=${MYSQL_DATABASE}" >> $GITHUB_OUTPUT
 
         # If WP wasn't installed, ensure database exists.
         if [[ "${{ steps.cache-wordpress-install.outputs.cache-hit }}" == true ]]; then
@@ -169,9 +169,9 @@ runs:
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
       run: |
         if [[ '${{ inputs.phpunit }}' == '1' ]]; then
-          echo "::set-output name=mode::xdebug"
+          echo "mode=xdebug" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=mode::none"
+          echo "mode=none" >> $GITHUB_OUTPUT
         fi
       shell: bash
 
@@ -193,13 +193,13 @@ runs:
     - name: Get last Monday's date
       id: get-date
       if: ${{ inputs.phpcs == 1 || inputs.phpunit == 1 || inputs.nodejs == 1 }}
-      run: echo "::set-output name=date::$(/bin/date -u --date='last Sun' "+%F")"
+      run: echo "date=$(/bin/date -u --date='last Sun' '+%F')" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Get composer global path
       id: composer-global-path
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
-      run: echo "::set-output name=path::$(composer config home)"
+      run: echo "path=$(composer config home)" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Ensure composer global bin is in path
@@ -272,7 +272,7 @@ runs:
     - name: Set nvm-versions cache path
       id: set-nvm-cache-info
       if: ${{ inputs.nodejs == 1 }}
-      run: echo "::set-output name=path::${NVM_DIR}/versions"
+      run: echo "path=${NVM_DIR}/versions" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Cache nvm versions
