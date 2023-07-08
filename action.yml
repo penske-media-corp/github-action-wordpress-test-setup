@@ -107,7 +107,7 @@ runs:
         echo "path=${TMPDIR}/wp" >> $GITHUB_OUTPUT
 
         if [[ "${{ matrix.wordpress }}" == 'latest' ]]; then
-          echo "version=$(curl https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].version')" >> $GITHUB_OUTPUT
+          echo "version=$(curl --no-progress-meter https://api.wordpress.org/core/version-check/1.7/ | jq -r '.offers[0].version')" >> $GITHUB_OUTPUT
         else
           echo "version=$(/bin/date -u '+%F')" >> $GITHUB_OUTPUT
         fi
@@ -147,7 +147,7 @@ runs:
       if: ${{ inputs.wordpress_version != '0' && steps.cache-wordpress-install.outputs.cache-hit != 'true' }}
       run: |
         SCRIPT_PATH="/usr/local/bin/install-wp-tests"
-        curl -o "${SCRIPT_PATH}" https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
+        curl --no-progress-meter -o "${SCRIPT_PATH}" https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
         chmod +x "${SCRIPT_PATH}"
         "${SCRIPT_PATH}" ${{ steps.start-mysql.outputs.database }} ${{ steps.start-mysql.outputs.user }} ${{ steps.start-mysql.outputs.password }} ${{ steps.start-mysql.outputs.host }} ${{ matrix.wordpress }}
       shell: bash
