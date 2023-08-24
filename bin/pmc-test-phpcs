@@ -18,6 +18,15 @@ pmc_set_phpcs_standard() {
 }
 
 pmc_run_phpcs() {
+	declare -a PHPCS_FILES
+	for i in "${PHP_FILES[@]}"
+		do
+			if [[ -f $i ]]
+				then
+					PHPCS_FILES+=($i)
+			fi
+		done
+
 	if [ true == "${PMC_DIFF_ONLY}" ]
 		then
 			# Since the way these commands fail we need to setup this so pipelines doesn't fail
@@ -34,11 +43,11 @@ pmc_run_phpcs() {
 							TXT_DOMAINS+=($(echo "${i}" | sed -e 's/-v[0-9]//g'))
 							echo -e "${GREEN}${SUCCESS}${RESET} Found modified plugin ${LIGHT_RED}${i}${RESET} adding to list of plugins to sniff"
 					done
-					${PHPCS_BIN} -s --runtime-set text_domain $(echo "${TXT_DOMAINS[*]}" | tr " " ,) --report=json --report-json=/tmp/phpcs.json ${PHP_FILES[*]}
+					${PHPCS_BIN} -s --runtime-set text_domain $(echo "${TXT_DOMAINS[*]}" | tr " " ,) --report=json --report-json=/tmp/phpcs.json ${PHPCS_FILES[*]}
 			elif [ -n "${PMC_TEXT_DOMAIN}" ]
-				then ${PHPCS_BIN} -s --runtime-set text_domain ${PMC_TEXT_DOMAIN} --report=json --report-json=/tmp/phpcs.json ${PHP_FILES[*]}
+				then ${PHPCS_BIN} -s --runtime-set text_domain ${PMC_TEXT_DOMAIN} --report=json --report-json=/tmp/phpcs.json ${PHPCS_FILES[*]}
 			else
-				${PHPCS_BIN} -s --report=json --report-json=/tmp/phpcs.json ${PHP_FILES[*]}
+				${PHPCS_BIN} -s --report=json --report-json=/tmp/phpcs.json ${PHPCS_FILES[*]}
 			fi
 
 			if [[ -f /tmp/diffFilter.log ]]
@@ -54,7 +63,7 @@ pmc_run_phpcs() {
 					return 1
 			fi
 
-		else ${PHPCS_BIN} -vps --colors --runtime-set text_domain "${PMC_TEXT_DOMAIN}" ${PHP_FILES[*]}
+		else ${PHPCS_BIN} -vps --colors --runtime-set text_domain "${PMC_TEXT_DOMAIN}" ${PHPCS_FILES[*]}
 	fi
 }
 
