@@ -5,8 +5,11 @@ echo -e "${GREEN}Starting $(basename ${BASH_SOURCE[0]})${RESET}"
 pmc_run_phplint() {
 	for i in "${PHP_FILES[@]}"
 	do
-		echo -e "${GREEN}${SUCCESS}${RESET} Found file ${LIGHT_RED}${i}${RESET} to lint"
-		php -l $i
+	  if [[ -f $i ]]
+	    then
+        echo -e "${GREEN}${SUCCESS}${RESET} Found file ${LIGHT_RED}${i}${RESET} to lint"
+        php -l $i
+    fi
 	done
 }
 
