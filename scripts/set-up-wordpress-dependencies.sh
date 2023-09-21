@@ -32,7 +32,7 @@ git_checkout "${WP_CONTENT_TARGET_DIR}/mu-plugins" https://github.com/Automattic
 
 # Install memcached drop-in.
 rm -rf "${WP_CONTENT_TARGET_DIR}/object-cache.php"
-ln -s "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/object-cache.php" "${WP_CONTENT_TARGET_DIR}/object-cache.php"
+ln -s "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/wp-memcached/object-cache.php" "${WP_CONTENT_TARGET_DIR}/object-cache.php"
 echo "We are loading the new object-cache"
 
 
