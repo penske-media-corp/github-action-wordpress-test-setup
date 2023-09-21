@@ -13,9 +13,9 @@ if [[ ! -n "$(grep '000-pre-vip-config/requires.php' "${WP_CONFIG_PATH}")" ]]; t
 if ( file_exists( ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.php' ) ) {
   require_once ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.php';
 }
+define( 'VIP_GO_APP_ENVIRONMENT', 'staging' );
 "
   echo "${VIP_GO_REQUIRES_ADDITION}" >> "${WP_CONFIG_PATH}"
-  echo "define( 'VIP_GO_APP_ENVIRONMENT', 'develop' );" >> "${WP_CONFIG_PATH}"
 fi
 
 echo "File output"
@@ -32,7 +32,7 @@ git_checkout "${WP_CONTENT_TARGET_DIR}/mu-plugins" https://github.com/Automattic
 
 # Install memcached drop-in.
 rm -rf "${WP_CONTENT_TARGET_DIR}/object-cache.php"
-ln -s "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/wp-memcached/object-cache.php" "${WP_CONTENT_TARGET_DIR}/object-cache.php"
+ln -s "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/object-cache.php" "${WP_CONTENT_TARGET_DIR}/object-cache.php"
 echo "We are loading the new object-cache"
 
 
