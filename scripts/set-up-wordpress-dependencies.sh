@@ -18,6 +18,9 @@ if ( file_exists( ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.
   echo "define( 'VIP_GO_APP_ENVIRONMENT', 'develop' );" >> "${WP_CONFIG_PATH}"
 fi
 
+echo "File output"
+echo `cat ${WP_TESTS_DIR}/wp-tests-config.php`
+
 # Install client-mu-plugins.
 if [[ ! -d "${WP_CONTENT_TARGET_DIR}/client-mu-plugins" ]]; then
   mkdir "${WP_CONTENT_TARGET_DIR}/client-mu-plugins"
