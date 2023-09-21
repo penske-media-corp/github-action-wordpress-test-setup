@@ -19,7 +19,7 @@ if ( file_exists( ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.
 fi
 
 echo "File output"
-echo `cat ${WP_TESTS_DIR}/wp-tests-config.php`
+echo `tail ${WP_TESTS_DIR}/wp-tests-config.php`
 
 # Install client-mu-plugins.
 if [[ ! -d "${WP_CONTENT_TARGET_DIR}/client-mu-plugins" ]]; then
