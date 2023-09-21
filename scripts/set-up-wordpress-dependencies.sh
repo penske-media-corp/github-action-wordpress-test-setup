@@ -31,6 +31,8 @@ if [[ ! -f "${WP_CONTENT_TARGET_DIR}/object-cache.php" && -f "${WP_CONTENT_TARGE
   ln -s "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/object-cache.php" "${WP_CONTENT_TARGET_DIR}/object-cache.php"
 fi
 
+echo "We are loading the new object-cache"
+
 # Install pmc-vip-go-plugins.
 if [[ -f "${WP_CONTENT_TARGET_DIR}/plugins/README.md" ]]; then
   rm -rf "${WP_CONTENT_TARGET_DIR}/plugins"
