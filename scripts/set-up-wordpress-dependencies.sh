@@ -15,6 +15,7 @@ if ( file_exists( ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.
 }
 "
   echo "${VIP_GO_REQUIRES_ADDITION}" >> "${WP_CONFIG_PATH}"
+  echo "define( 'VIP_GO_APP_ENVIRONMENT', 'develop' );" >> "${WP_CONFIG_PATH}"
 fi
 
 # Install client-mu-plugins.
