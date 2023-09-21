@@ -27,11 +27,10 @@ mv "${RUNNER_TEMP}/plugin-loader.php" "${WP_CONTENT_TARGET_DIR}/client-mu-plugin
 git_checkout "${WP_CONTENT_TARGET_DIR}/mu-plugins" https://github.com/Automattic/vip-go-mu-plugins-built.git 1
 
 # Install memcached drop-in.
-if [[ ! -f "${WP_CONTENT_TARGET_DIR}/object-cache.php" && -f "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/object-cache.php" ]]; then
-  ln -s "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/object-cache.php" "${WP_CONTENT_TARGET_DIR}/object-cache.php"
-fi
 
+  ln -s "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/object-cache.php" "${WP_CONTENT_TARGET_DIR}/object-cache.php"
 echo "We are loading the new object-cache"
+
 
 # Install pmc-vip-go-plugins.
 if [[ -f "${WP_CONTENT_TARGET_DIR}/plugins/README.md" ]]; then
