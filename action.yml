@@ -246,6 +246,7 @@ runs:
         WP_CONFIG_PATH="${WP_TESTS_DIR}/wp-tests-config.php"
 
         echo "define( 'IS_UNIT_TEST', true );" >> "${WP_CONFIG_PATH}"
+        echo "define( 'VIP_GO_APP_ENVIRONMENT', 'staging' );" >> "${WP_CONFIG_PATH}"
 
         sed -i 's/example\.org/pmcdev\.local/g' "${WP_CONFIG_PATH}"
       shell: bash
