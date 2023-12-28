@@ -64,6 +64,8 @@ then
 				pushd ${i}
 				pmc_run_npmtest
 				popd
+			else
+				echo "\033[31mWARNING:\033[0m ${i} does not appear to exist. Skipping tests."
 			fi
 		done
 	fi
