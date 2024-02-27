@@ -102,7 +102,7 @@ function maybe_build_pmc_plugins_js_checklist {
       # Build array of unique directories from git
       BASE_PLUGIN_DIRECTORY=$(echo "${i}" | cut -d "/" -f1)
       # Check if directory is already in array and if not add it to the array
-      if [[ ! " ${PMC_PLUGINS_JS_CHECKLIST[@]} " =~ " ${BASE_PLUGIN_DIRECTORY} " ] && [ -d $dirname ]]
+      if [[ ! " ${PMC_PLUGINS_JS_CHECKLIST[@]} " =~ " ${BASE_PLUGIN_DIRECTORY} " ] && [ -d ${BASE_PLUGIN_DIRECTORY} ]]
         then
           echo -e "${BLUE}${INFO}${RESET} Adding directory ${LIGHT_RED}${BASE_PLUGIN_DIRECTORY}${RESET} to build js check list"
           PMC_PLUGINS_JS_CHECKLIST+=("${BASE_PLUGIN_DIRECTORY}")
