@@ -59,9 +59,14 @@ then
 		# potential errors
 		for i in "${PMC_PLUGINS_JS_CHECKLIST[@]}"
 		do
-			pushd ${i}
-			pmc_run_npmtest
-			popd
+			if [[ -d "${i}" ]]
+			then
+				pushd ${i}
+				pmc_run_npmtest
+				popd
+			else
+				echo "WARNING: ${i} does not appear to exist. Skipping tests."
+			fi
 		done
 	fi
 else
