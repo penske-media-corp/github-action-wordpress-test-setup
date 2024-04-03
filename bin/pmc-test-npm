@@ -13,7 +13,7 @@ pmc_run_npmtest() {
 			packagejsons+=("$REPLY")
 		done < <(find . -maxdepth 3 -type d -name "*node_modules*" -prune -o -name "package.json" -print0)
 
-    set -e
+		set -e
 		for i in "${packagejsons[@]}"
 		do
 			pushd $( dirname $i )
@@ -25,11 +25,11 @@ pmc_run_npmtest() {
 					exit 1
 				fi
 
-				nvm install
-				nvm use
 				if [[ $( npm run | grep 'test' ) ]]; then
+					nvm install
 					npm ci
-					npm run test || { echo 'Tests Failed' ; exit 1; }
+					npm run test || { echo 'Tests Failed'; exit 1; }
+					rm -rf node_modules
 				fi
 			fi
 			popd
