@@ -40,7 +40,7 @@ runs:
     # Shared steps
 
     - name: Check out repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: ${{ inputs.git_checkout_fetch_depth }}
         ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || '' }}
@@ -116,7 +116,7 @@ runs:
     - name: Cache WordPress install
       id: cache-wordpress-install
       if: ${{ inputs.wordpress_version != '0' }}
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.set-wp-install-cache-info.outputs.path }}
         key: ${{ runner.os }}-version-${{ steps.set-wp-install-cache-info.outputs.version }}-php-${{ matrix.php }}-wp-${{ matrix.wordpress }}-wordpress-install
@@ -211,7 +211,7 @@ runs:
     - name: Cache global composer dependencies
       id: composer-cache-global
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.composer-global-path.outputs.path }}
         key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-php-${{ inputs.php_version }}-phpcs-${{ inputs.phpcs }}-phpunit-${{ inputs.phpunit }}-composer-global
@@ -278,7 +278,7 @@ runs:
     - name: Cache nvm versions
       id: cache-nvm-versions
       if: ${{ inputs.nodejs == 1 }}
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ steps.set-nvm-cache-info.outputs.path }}
         key: ${{ runner.os }}-nvm-versions-${{ steps.get-date.outputs.date }}
