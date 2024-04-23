@@ -92,7 +92,7 @@ runs:
         echo "PMC_IS_PMC_PLUGINS=${PMC_IS_PMC_PLUGINS}" >> $GITHUB_ENV
 
         # Set VIP_THEME variable
-        echo "VIP_THEME=${{ inputs. vip_theme }}" >> $GITHUB_ENV
+        echo "VIP_THEME=${{ inputs.vip_theme }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Set environment variables to install WordPress
@@ -196,16 +196,25 @@ runs:
       run: echo "date=$(/bin/date -u --date='last Sun' '+%F')" >> $GITHUB_OUTPUT
       shell: bash
 
+      # `composer config` fails if the working directory has no `composer.json`.
+    - name: Prepare composer
+      id: prepare-composer
+      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+      run: |
+        mkdir "${RUNNER_TEMP}/composer/"
+        echo "{}" > "${RUNNER_TEMP}/composer/composer.json"
+      shell: bash
+
     - name: Get composer global path
       id: composer-global-path
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
-      run: echo "path=$(composer config home)" >> $GITHUB_OUTPUT
+      run: echo "path=$(composer --working-dir="${RUNNER_TEMP}/composer/" config home)" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Ensure composer global bin is in path
       id: composer-global-bin-path
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
-      run: echo "$(composer config home)/$(composer config bin-dir)" >> $GITHUB_PATH
+      run: echo "$(composer --working-dir="${RUNNER_TEMP}/composer/" config home)/$(composer --working-dir="${RUNNER_TEMP}/composer/" config bin-dir)" >> $GITHUB_PATH
       shell: bash
 
     - name: Cache global composer dependencies
