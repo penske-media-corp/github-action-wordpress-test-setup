@@ -92,7 +92,7 @@ runs:
         echo "PMC_IS_PMC_PLUGINS=${PMC_IS_PMC_PLUGINS}" >> $GITHUB_ENV
 
         # Set VIP_THEME variable
-        echo "VIP_THEME=${{ inputs. vip_theme }}" >> $GITHUB_ENV
+        echo "VIP_THEME=${{ inputs.vip_theme }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Set environment variables to install WordPress
@@ -199,13 +199,13 @@ runs:
     - name: Get composer global path
       id: composer-global-path
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
-      run: echo "path=$(composer config home)" >> $GITHUB_OUTPUT
+      run: echo "path=$(composer --global config home)" >> $GITHUB_OUTPUT
       shell: bash
 
     - name: Ensure composer global bin is in path
       id: composer-global-bin-path
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
-      run: echo "$(composer config home)/$(composer config bin-dir)" >> $GITHUB_PATH
+      run: echo "$(composer --global config home)/$(composer --global config bin-dir)" >> $GITHUB_PATH
       shell: bash
 
     - name: Cache global composer dependencies
