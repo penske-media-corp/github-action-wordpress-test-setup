@@ -50,6 +50,14 @@ pmc_run_phpcs() {
 				${PHPCS_BIN} -s --report=json --report-json=/tmp/phpcs.json ${PHPCS_FILES[*]}
 			fi
 
+			set -e
+			if [[ ! -f /tmp/phpcs.json ]]
+				then
+					echo -e "${RED}${ERROR}${RESET} PHPCS failed to generate a report."
+					return 1
+			fi
+			set +e
+
 			if [[ -f /tmp/diffFilter.log ]]
 				then
 					rm -f /tmp/diffFilter.log
