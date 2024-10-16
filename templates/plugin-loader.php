@@ -29,7 +29,7 @@ add_action(
 		$theme_plugins_paths[] = getenv( 'GITHUB_WORKSPACE' ) . '/client-mu-plugins/';
 
 		$theme_plugins_paths = array_unique( $theme_plugins_paths );
-var_export( $theme_plugins_paths );
+
 		foreach ( $theme_plugins_paths as $theme_plugins_path ) {
 			if ( is_dir( $theme_plugins_path ) ) {
 				foreach ( wpcom_vip_get_client_mu_plugins( $theme_plugins_path ) as $client_mu_plugin ) {
