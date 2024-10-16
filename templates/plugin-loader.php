@@ -23,14 +23,8 @@ add_action(
 		$theme_plugins_paths = [];
 
 		if ( ! getenv( 'PMC_IS_PMC_PLUGINS' ) ) {
-			$test = sprintf(
-				'%1$s/wp-content/themes/%2$spmc-core-v2/client-mu-plugins/',
-				getenv( 'WP_CORE_DIR' ),
-				'true' === getenv( 'VIP_THEME' ) ? 'vip/' : '',
-			);
-var_export( $test );
+			$theme_plugins_paths[] = get_template_directory() . '/client-mu-plugins/';
 		}
-var_export( get_stylesheet_directory() );
 
 		$theme_plugins_paths[] = getenv( 'GITHUB_WORKSPACE' ) . '/client-mu-plugins/';
 
