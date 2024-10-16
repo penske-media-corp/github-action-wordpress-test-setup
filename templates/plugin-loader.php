@@ -8,22 +8,36 @@
  * first place.
  */
 
-add_action( 
-	'muplugins_loaded', 
+add_action(
+	'muplugins_loaded',
 	static function(): void {
 		// Bail during the PHPUnit install step as it happens before the bootstrap sets necessary constants.
 		if ( ! class_exists( PMC\Unit_Test\Bootstrap::class, false ) ) {
 			return;
 		}
 
-		$theme_plugins_path = getenv( 'GITHUB_WORKSPACE' ) . '/client-mu-plugins/';
+		if ( ! wpcom_vip_should_load_plugins() ) {
+			return;
+		}
 
-		if ( wpcom_vip_should_load_plugins() && is_dir( $theme_plugins_path ) ) {
-			foreach ( wpcom_vip_get_client_mu_plugins( $theme_plugins_path ) as $client_mu_plugin ) {
-				include_once $client_mu_plugin;
+		$theme_plugins_paths = [];
+
+		if ( ! getenv( 'PMC_IS_PMC_PLUGINS' ) ) {
+			$theme_plugins_paths[] = get_template_directory() . '/client-mu-plugins/';
+		}
+
+		$theme_plugins_paths[] = getenv( 'GITHUB_WORKSPACE' ) . '/client-mu-plugins/';
+
+		$theme_plugins_paths = array_unique( $theme_plugins_paths );
+
+		foreach ( $theme_plugins_paths as $theme_plugins_path ) {
+			if ( is_dir( $theme_plugins_path ) ) {
+				foreach ( wpcom_vip_get_client_mu_plugins( $theme_plugins_path ) as $client_mu_plugin ) {
+					include_once $client_mu_plugin;
+				}
+
+				unset( $client_mu_plugin );
 			}
-
-			unset( $client_mu_plugin );
 		}
 	}
 );
