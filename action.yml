@@ -146,7 +146,7 @@ runs:
     - name: Install WordPress
       if: ${{ inputs.wordpress_version != '0' && steps.cache-wordpress-install.outputs.cache-hit != 'true' }}
       run: |
-        apt-get update && apt-get install -y subversion
+        sudo apt-get update && sudo apt-get install -y subversion
 
         SCRIPT_PATH="/usr/local/bin/install-wp-tests"
         curl --no-progress-meter -o "${SCRIPT_PATH}" https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
