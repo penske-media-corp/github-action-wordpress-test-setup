@@ -8,6 +8,11 @@ WP_CONTENT_TARGET_DIR="${WP_CORE_DIR}/wp-content"
 # Modify `wp-tests-config.php`.
 WP_CONFIG_PATH="${WP_TESTS_DIR}/wp-tests-config.php"
 
+if [[ ! -n "$(grep 'WPCOM_VIP_JETPACK_LOCAL' "${WP_CONFIG_PATH}")" ]]; then
+  echo "define( 'WPCOM_VIP_JETPACK_LOCAL', true );
+" >> "${WP_CONFIG_PATH}"
+fi
+
 if [[ ! -n "$(grep '000-pre-vip-config/requires.php' "${WP_CONFIG_PATH}")" ]]; then
   VIP_GO_REQUIRES_ADDITION="// Load VIP's additional requirements.
 if ( file_exists( ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.php' ) ) {
