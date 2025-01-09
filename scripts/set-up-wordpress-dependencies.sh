@@ -22,6 +22,8 @@ if ( file_exists( ABSPATH . '/wp-content/mu-plugins/000-pre-vip-config/requires.
   echo "${VIP_GO_REQUIRES_ADDITION}" >> "${WP_CONFIG_PATH}"
 fi
 
+cat "${WP_CONFIG_PATH}"
+
 # Install client-mu-plugins.
 if [[ ! -d "${WP_CONTENT_TARGET_DIR}/client-mu-plugins" ]]; then
   mkdir "${WP_CONTENT_TARGET_DIR}/client-mu-plugins"
