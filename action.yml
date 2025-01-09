@@ -251,8 +251,6 @@ runs:
         echo "define( 'WPCOM_VIP_JETPACK_LOCAL', true );" >> "${WP_CONFIG_PATH}"
 
         sed -i 's/example\.org/pmcdev\.local/g' "${WP_CONFIG_PATH}"
-
-        cat "${WP_CONFIG_PATH}"
       shell: bash
 
     # Prepare for PHPCS
