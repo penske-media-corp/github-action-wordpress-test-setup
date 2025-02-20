@@ -68,7 +68,7 @@ else
   rm -rf "${PMC_PLUGINS_DIR}"
   ln -s "${GITHUB_WORKSPACE}" "${PMC_PLUGINS_DIR}"
 
-  git_checkout "${WP_CONTENT_TARGET_DIR}/themes/pmc-nova-theme" git@github.com:penske-media-corp/pmc-nova-theme.git 0
+  git_checkout "${WP_CONTENT_TARGET_DIR}/themes/pmc-nova-theme" git@github.com:penske-media-corp/pmc-nova-theme.git 1
 fi
 
 maybe_switch_branch_for_testing_theme . "${BITBUCKET_BRANCH}"

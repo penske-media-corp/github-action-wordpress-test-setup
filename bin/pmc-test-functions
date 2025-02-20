@@ -177,13 +177,13 @@ function checkout_dependencies {
   if [[ -n "${THEME_PARENT}" ]]; then
     if [[ "${THEME_PARENT}" == vip/* ]]; then
       THEME_PARENT=$(echo "${THEME_PARENT}" | cut -d'/' -f2)
-      git_checkout ${WP_THEME_FOLDER}/vip/${THEME_PARENT} git@github.com:penske-media-corp/${THEME_PARENT}.git 0
+      git_checkout ${WP_THEME_FOLDER}/vip/${THEME_PARENT} git@github.com:penske-media-corp/${THEME_PARENT}.git 1
     else
-      git_checkout ${WP_THEME_FOLDER}/${THEME_PARENT} git@github.com:penske-media-corp/${THEME_PARENT}.git 0
+      git_checkout ${WP_THEME_FOLDER}/${THEME_PARENT} git@github.com:penske-media-corp/${THEME_PARENT}.git 1
     fi
   fi
 
-  git_checkout ${WEB_ROOT}/wp-content/plugins/pmc-plugins git@github.com:penske-media-corp/pmc-plugins.git 0
+  git_checkout ${WEB_ROOT}/wp-content/plugins/pmc-plugins git@github.com:penske-media-corp/pmc-plugins.git 1
 }
 
 function get_parent_wp_theme {
