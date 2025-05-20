@@ -152,6 +152,10 @@ runs:
         # Install Subversion, as GitHub no longer provides it in its runner images.
         sudo apt-get update && sudo apt-get install -y subversion && sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
 
+        # Debug
+        ls -lah "${{github.action_path}}"
+        ls -lah "${{github.action_path}}/templates"
+
         SCRIPT_PATH="/usr/local/bin/install-wp-tests"
         curl --no-progress-meter -o "${SCRIPT_PATH}" https://raw.githubusercontent.com/wp-cli/scaffold-command/master/templates/install-wp-tests.sh
         chmod +x "${SCRIPT_PATH}"
