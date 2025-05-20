@@ -146,6 +146,10 @@ runs:
     - name: Install WordPress
       if: ${{ inputs.wordpress_version != '0' && steps.cache-wordpress-install.outputs.cache-hit != 'true' }}
       run: |
+        # Disable man-db updates as they're simply a waste of time.
+        sudo rm /var/lib/man-db/auto-update
+
+        # Install Subversion, as GitHub no longer provides it in its runner images.
         sudo apt-get update && sudo apt-get install -y subversion && sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
 
         SCRIPT_PATH="/usr/local/bin/install-wp-tests"
