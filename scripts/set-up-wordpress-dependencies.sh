@@ -23,11 +23,6 @@ if [[ ! -d "${WP_CONTENT_TARGET_DIR}/client-mu-plugins" ]]; then
 fi
 mv "${RUNNER_TEMP}/plugin-loader.php" "${WP_CONTENT_TARGET_DIR}/client-mu-plugins/plugin-loader.php"
 
-if [[ ! -d "${WP_CONTENT_TARGET_DIR}/client-mu-plugins/jetpack" ]]; then
-  curl --no-progress-meter -o /tmp/jetpack-14.0.zip https://downloads.wordpress.org/plugin/jetpack.14.0.zip
-  unzip -q /tmp/jetpack-14.0.zip -d "${WP_CONTENT_TARGET_DIR}/client-mu-plugins"
-fi
-
 # Install VIP Go's mu-plugins.
 git_checkout "${WP_CONTENT_TARGET_DIR}/mu-plugins" https://github.com/Automattic/vip-go-mu-plugins-built.git 1
 
