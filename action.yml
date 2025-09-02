@@ -187,7 +187,7 @@ runs:
       with:
         php-version: ${{ inputs.php_version }}
         coverage: ${{ steps.php-coverage-mode.outputs.mode }}
-        tools: composer:1
+        tools: composer:v2
 
     - name: Log debug information
       if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
