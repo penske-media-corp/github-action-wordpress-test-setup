@@ -222,6 +222,11 @@ runs:
         path: ${{ steps.composer-global-path.outputs.path }}
         key: ${{ runner.os }}-date-${{ steps.get-date.outputs.date }}-php-${{ inputs.php_version }}-phpcs-${{ inputs.phpcs }}-phpunit-${{ inputs.phpunit }}-composer-global
 
+    - name: Configure Composer GitHub auth
+      if: ${{ inputs.phpcs == '1' || inputs.phpunit == '1' }}
+      run: composer config --global --auth github-oauth.github.com "${{ github.token }}"
+      shell: bash
+
     - name: Install diffFilter
       if: ${{ ( inputs.phpcs == '1' || inputs.phpunit == '1' ) && steps.composer-cache-global.outputs.cache-hit != 'true' }}
       run: composer global require exussum12/coverage-checker
