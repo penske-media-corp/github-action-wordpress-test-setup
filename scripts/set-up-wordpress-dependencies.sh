@@ -30,7 +30,7 @@ git_checkout "${WP_CONTENT_TARGET_DIR}/mu-plugins" https://github.com/Automattic
 if [[ ! -f "${WP_CONTENT_TARGET_DIR}/object-cache.php" && -f "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/object-cache.php" ]]; then
   ln -s "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/object-cache.php" "${WP_CONTENT_TARGET_DIR}/object-cache.php"
 else
-  # If object cache file already exists override with dorpin version.
+  # If object cache file already exists override with drop-in version.
   rm -rf "${WP_CONTENT_TARGET_DIR}/object-cache.php"
   ln -s "${WP_CONTENT_TARGET_DIR}/mu-plugins/drop-ins/object-cache.php" "${WP_CONTENT_TARGET_DIR}/object-cache.php"
 fi
@@ -62,6 +62,8 @@ if [[ -z "${PMC_IS_PMC_PLUGINS}" ]]; then
 else
   rm -rf "${PMC_PLUGINS_DIR}"
   ln -s "${GITHUB_WORKSPACE}" "${PMC_PLUGINS_DIR}"
+
+  git_checkout "${WP_CONTENT_TARGET_DIR}/themes/pmc-nova-theme" git@github.com:penske-media-corp/pmc-nova-theme.git 1
 fi
 
 maybe_switch_branch_for_testing_theme . "${BITBUCKET_BRANCH}"
